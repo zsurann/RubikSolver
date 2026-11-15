@@ -1,0 +1,13 @@
+{
+  // App statica (dist/) + API su /api/*. D1 creato con: npx wrangler d1 create cubo-facile --jurisdiction eu
+  "name": "cubo-facile",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": "./dist", "not_found_handling": "single-page-application", "run_worker_first": ["/api/*"] },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "cubo-facile", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" }
+  ],
+  "vars": { "EMAIL_FROM": "Cubo Facile <noreply@example.com>", "BETTER_AUTH_URL": "http://localhost:8787" },
+  "observability": { "enabled": true }
+}
