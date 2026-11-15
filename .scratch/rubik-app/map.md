@@ -22,6 +22,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 
 - [Input, modalità, lingua, progressi](issues/00-grilling-iniziale.md): web app; fotocamera + ritocco manuale; tre modalità; soluzione a scelta (principianti/minime); IT+EN; account cloud.
 - [Backend account](issues/04-research-backend-account.md): Supabase Free in UE (Frankfurt), SMTP esterno in produzione; alternativa Cloudflare.
+- [Metodo principianti](issues/01-research-metodo-principianti.md): strati in 8 fasi con margherita, giallo sempre in alto, 7 algoritmi brevi senza B.
 
 ## Not yet specified
 
@@ -29,7 +30,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - Modalità Pratica: cosa dentro (timer, mescolata casuale, suggerimenti a richiesta, statistiche?).
 - UX della scansione: ordine delle facce, guida a schermo, cosa succede se lo stato del cubo è impossibile.
 - Hosting e deploy, dominio, CI.
-- Strategia di test (logica del cubo, solver, riconoscimento colori).
+- Strategia di test (logica del cubo, solver, riconoscimento colori; verificare i 7 algoritmi del metodo su simulatore).
 - Flusso di traduzione IT/EN.
 - Accessibilità (daltonici: i colori del cubo sono il problema principale), prestazioni su telefoni economici.
 - Privacy/GDPR per gli account e per le immagini della fotocamera.
