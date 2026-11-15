@@ -24,6 +24,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - [Backend account](issues/04-research-backend-account.md): Supabase Free in UE (Frankfurt), SMTP esterno in produzione; alternativa Cloudflare.
 - [Metodo principianti](issues/01-research-metodo-principianti.md): strati in 8 fasi con margherita, giallo sempre in alto, 7 algoritmi brevi senza B.
 - [Stack 3D e solver](issues/02-research-stack-3d-solver.md): Three.js con cubo nostro; min2phase in Web Worker per le mosse minime; solver principianti a fasi da scrivere.
+- [Riconoscimento colori](issues/03-research-riconoscimento-colori.md): griglia guida + Lab, calibrazione sui centri, abbinamento ai pezzi a ΔE minimo, verify() + ritocco dei pezzi incerti; niente OpenCV/ML.
 
 ## Not yet specified
 
