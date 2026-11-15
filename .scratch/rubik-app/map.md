@@ -29,17 +29,15 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - [Flusso UX](issues/06-grilling-flusso-ux.md): benvenuto breve; login facoltativo; guida una mossa alla volta con "Mi sono perso"; presa mostrata a ogni fase; frecce + lettere; 1 lezione per fase; Pratica con cubo virtuale, timer, allenamento fase.
 - [Prototipo dell'aspetto del cubo](issues/07-prototype-look-cubo.md): stile Classico, sfondo Studio, animazione morbida ~550 ms, freccia bianca pulsante + strato illuminato + didascalia.
 - [Cosa salva l'account](issues/08-grilling-account.md): login facoltativo (Google, email+password, link magico); salva lezioni, tempi, preferenze, cubi scansionati; foto mai salvate; ospite locale unito al login; account solo 14+; elimina/esporta/azzera.
+- [UX della scansione](issues/09-grilling-ux-scansione.md): ordine fisso guidato dal cubo 3D, scatto automatico, ritocco su cubo 3D, inserimento a mano se niente fotocamera, guida ai pezzi sospetti se lo stato è impossibile.
 
 ## Not yet specified
 
-- Contenuto dettagliato delle 9 lezioni (testi IT/EN, traguardi visivi, frasi incoraggianti, avviso "sembra rotto" nella fase finale).
 - Dominio e CI per il deploy su Cloudflare.
 - Licenza di min2phase.js da verificare in costruzione (GPL accettata dall'utente).
-- Strategia di test (logica del cubo, solver, riconoscimento colori; verificare i 7 algoritmi del metodo su simulatore).
+- Strategia di test (dipende dal Piano di costruzione: logica del cubo, solver, riconoscimento colori; verificare i 7 algoritmi del metodo su simulatore).
 - Flusso di traduzione IT/EN.
-- Accessibilità (daltonici: i colori del cubo sono il problema principale), prestazioni su telefoni economici.
 - Testo di privacy policy e termini (IT/EN), fornitore email transazionale per recupero password e link magico.
-- Suddivisione della costruzione in ticket `task` (quando le decisioni sono chiuse).
 
 ## Out of scope
 
