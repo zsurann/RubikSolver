@@ -34,6 +34,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - [Testi delle lezioni](issues/11-prototype-testi-lezioni.md): bozza approvata come modello; tono amichevole e diretto, ~8 schermate, nomignoli per le formule, "Attento a…" con demo errore/giusto.
 - [Accessibilità](issues/12-grilling-accessibilita.md): modalità daltonici con simboli, nomi dei colori sempre scritti, qualità grafica automatica + "Grafica leggera", rispetto di "riduci movimento".
 - [Scheletro del progetto](issues/13-task-scheletro.md): React + TS + Vite, Vitest, oxlint, i18n IT/EN, CI; app "Cubo Facile"; anteprime Cloudflare da collegare a mano.
+- [Motore del cubo](issues/14-task-motore-cubo.md): stringa facelet Kociemba, mosse dalla geometria, scramble, verify() con stato a pezzi; 13 test.
 
 ## Not yet specified
 
