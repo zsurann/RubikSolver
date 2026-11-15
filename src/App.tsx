@@ -1,15 +1,18 @@
-import { useEffect, useState, type ReactNode } from 'react'
-import { Account, NewPassword } from './app/Account'
+import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react'
 import { Home } from './app/Home'
 import { Privacy, Terms } from './app/Legal'
 import { SettingsScreen } from './app/SettingsScreen'
 import { ProgressProvider } from './app/progress'
 import { SettingsProvider, useSettings } from './app/settings'
-import { Welcome } from './app/Welcome'
 import { t } from './i18n'
-import { Learn } from './learn/Learn'
-import { Practice } from './practice/Practice'
-import { SolveMine } from './solve/SolveMine'
+
+// Le pagine con il cubo 3D e l'account si caricano solo quando servono (home leggera).
+const SolveMine = lazy(() => import('./solve/SolveMine').then((m) => ({ default: m.SolveMine })))
+const Learn = lazy(() => import('./learn/Learn').then((m) => ({ default: m.Learn })))
+const Practice = lazy(() => import('./practice/Practice').then((m) => ({ default: m.Practice })))
+const Account = lazy(() => import('./app/Account').then((m) => ({ default: m.Account })))
+const NewPassword = lazy(() => import('./app/Account').then((m) => ({ default: m.NewPassword })))
+const Welcome = lazy(() => import('./app/Welcome').then((m) => ({ default: m.Welcome })))
 
 function useHash() {
   const [hash, setHash] = useState(location.hash)
@@ -30,7 +33,7 @@ function Router() {
   const lang = settings.lang
   useEffect(() => { document.documentElement.lang = lang }, [lang])
 
-  if (!settings.welcomed && !hash) return <Welcome lang={lang} onDone={() => update({ welcomed: true })} />
+  if (!settings.welcomed && !hash) return <Suspense fallback={null}><Welcome lang={lang} onDone={() => update({ welcomed: true })} /></Suspense>
   const pages: Record<string, () => ReactNode> = {
     '#risolvi': () => <SolveMine lang={lang} />,
     '#impostazioni': () => <SettingsScreen />,
@@ -51,7 +54,7 @@ function Router() {
           <span className="muted">{t('appName', lang)}</span>
         </div>
       </div>
-      {page()}
+      <Suspense fallback={<p className="page muted">…</p>}>{page()}</Suspense>
     </>
   )
 }

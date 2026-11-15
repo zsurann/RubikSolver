@@ -1,6 +1,13 @@
 # Cubo Facile
 
-Web app che insegna a risolvere il cubo di Rubik 3x3 a chi parte da zero. Mappa del progetto: `.scratch/rubik-app/map.md`.
+Web app che insegna a risolvere il cubo di Rubik 3x3 a chi parte da zero (italiano e inglese).
+
+- **Risolvi il mio**: inquadri le 6 facce con la fotocamera (o inserisci i colori a mano), ritocchi i colori sul cubo 3D, scegli metodo per principianti (~150 mosse in 8 fasi) o soluzione breve (~20 mosse) e segui una mossa alla volta.
+- **Impara**: 9 lezioni (notazione + 8 fasi del metodo a strati) con demo 3D ed esercizi sul cubo virtuale.
+- **Pratica**: cubo virtuale con aiuto, cronometro con medie, allenamento di una singola fase.
+- **Account facoltativo** (14+): progressi sincronizzati, esportazione e cancellazione dei dati.
+
+Mappa delle decisioni e dei ticket: `.scratch/rubik-app/map.md`.
 
 ## Sviluppo
 
