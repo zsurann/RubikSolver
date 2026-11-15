@@ -1,0 +1,402 @@
+<title>Prova Stile Cubo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap">
+<style>
+/* Layout: palco 3D grande a sinistra, pannello di controlli a destra; su telefono si impilano. */
+:root {
+  --bg: #eef0f4; --panel: #ffffff; --fg: #1b2230; --muted: #5d6677; --line: #dde1e8;
+  --accent: #ff5800; --accent-fg: #ffffff; --chip: #f3f5f8;
+  --display: "Fredoka", "Nunito", system-ui, sans-serif;
+  --body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #10141c; --panel: #181d27; --fg: #e9edf4; --muted: #9aa3b4; --line: #2a3140;
+  --accent: #ff7a2e; --accent-fg: #1a0d04; --chip: #212837; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #10141c; --panel: #181d27; --fg: #e9edf4; --muted: #9aa3b4; --line: #2a3140;
+  --accent: #ff7a2e; --accent-fg: #1a0d04; --chip: #212837; color-scheme: dark }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px; box-sizing: border-box; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-bottom: 14px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 1.6rem; margin: 0; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); }
+main { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 16px; align-items: start; }
+@media (max-width: 860px) { main { grid-template-columns: minmax(0, 1fr); } }
+#stage { position: relative; border-radius: 18px; overflow: hidden; aspect-ratio: 4 / 3.4; max-width: 100%; min-height: 320px; touch-action: none; cursor: grab; }
+#stage:active { cursor: grabbing; }
+#stage canvas { display: block; width: 100%; height: 100%; }
+#stage.bg-notte { background: radial-gradient(120% 90% at 50% 35%, #26324a 0%, #0c111b 75%); }
+#stage.bg-studio { background: radial-gradient(120% 90% at 50% 35%, #ffffff 0%, #cfd4dc 80%); }
+#stage.bg-tramonto { background: radial-gradient(120% 90% at 50% 30%, #ffb27a 0%, #c9476a 55%, #3b1d4a 100%); }
+#caption { position: absolute; left: 16px; bottom: 14px; display: flex; align-items: center; gap: 12px;
+  background: rgba(10,14,22,.62); color: #fff; padding: 8px 14px 8px 8px; border-radius: 14px; backdrop-filter: blur(6px); }
+#caption b { font-family: var(--display); font-size: 1.8rem; min-width: 52px; height: 52px; display: grid; place-items: center; background: #fff; color: #10141c; border-radius: 10px; padding: 0 6px; }
+#caption span { font-weight: 700; font-size: 1.05rem; }
+#caption small { display: block; font-weight: 400; opacity: .8; font-size: .82rem; }
+#hint { position: absolute; right: 14px; top: 12px; font-size: .8rem; color: #fff; background: rgba(10,14,22,.45); padding: 4px 10px; border-radius: 999px; }
+aside { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+section h2 { font-family: var(--display); font-weight: 500; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+button { font: inherit; color: var(--fg); background: var(--chip); border: 1px solid var(--line); border-radius: 10px; padding: 7px 11px; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); font-weight: 700; }
+button.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); font-weight: 700; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+input[type=range] { flex: 1; accent-color: var(--accent); min-width: 120px; }
+label.tog { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+input[type=checkbox] { accent-color: var(--accent); width: 18px; height: 18px; }
+select { font: inherit; color: var(--fg); background: var(--chip); border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; width: 100%; }
+#seq { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
+#seq span { font-family: var(--display); font-size: 1.05rem; padding: 3px 9px; border-radius: 8px; background: var(--chip); border: 1px solid var(--line); }
+#seq span.done { opacity: .45; }
+#seq span.next { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+.pad { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; }
+.pad button { padding: 7px 0; font-family: var(--display); }
+.tabnum { font-variant-numeric: tabular-nums; color: var(--muted); min-width: 56px; text-align: right; }
+footer { margin-top: 14px; color: var(--muted); font-size: .85rem; max-width: 70ch; }
+</style>
+
+<header>
+  <h1>Prova di stile del cubo</h1>
+  <p>Prototipo grezzo: scegli cosa ti piace, poi dimmelo.</p>
+</header>
+<main>
+  <div id="stage" class="bg-notte" aria-label="Cubo 3D, trascina per ruotarlo">
+    <div id="hint">Trascina per girare il cubo</div>
+    <div id="caption"><b id="capMove">R</b><span id="capText">Destra su<small>Prossima mossa</small></span></div>
+  </div>
+  <aside>
+    <section>
+      <h2>Stile del cubo</h2>
+      <div class="chips" id="styleChips">
+        <button data-v="classico" aria-pressed="true">Classico</button>
+        <button data-v="senza" aria-pressed="false">Senza adesivi</button>
+        <button data-v="morbido" aria-pressed="false">Morbido</button>
+      </div>
+    </section>
+    <section>
+      <h2>Sfondo</h2>
+      <div class="chips" id="bgChips">
+        <button data-v="notte" aria-pressed="true">Notte</button>
+        <button data-v="studio" aria-pressed="false">Studio</button>
+        <button data-v="tramonto" aria-pressed="false">Tramonto</button>
+      </div>
+    </section>
+    <section>
+      <h2>Movimento</h2>
+      <div class="row"><label for="speed">Durata mossa</label><input id="speed" type="range" min="150" max="1400" step="50" value="550"><span class="tabnum" id="speedVal">550 ms</span></div>
+      <div class="chips" id="easeChips" style="margin-top:8px">
+        <button data-v="morbido" aria-pressed="true">Morbido</button>
+        <button data-v="rimbalzo" aria-pressed="false">Con rimbalzo</button>
+        <button data-v="meccanico" aria-pressed="false">Meccanico</button>
+      </div>
+    </section>
+    <section>
+      <h2>Aiuti visivi</h2>
+      <div class="row">
+        <label class="tog"><input id="optArrow" type="checkbox" checked> Frecce</label>
+        <label class="tog"><input id="optGlow" type="checkbox" checked> Evidenzia lo strato</label>
+      </div>
+    </section>
+    <section>
+      <h2>Prova una formula</h2>
+      <select id="alg" aria-label="Formula">
+        <option value="R U R' U'">Angoli bianchi: R U R' U'</option>
+        <option value="F R U R' U' F'">Croce gialla: F R U R' U' F'</option>
+        <option value="R U R' U R U2 R' U">Spigoli gialli: R U R' U R U2 R' U</option>
+        <option value="U R U' R' U' F' U F">Secondo strato: U R U' R' U' F' U F</option>
+      </select>
+      <div id="seq"></div>
+      <div class="row">
+        <button id="back">◀ Indietro</button>
+        <button id="step" class="primary">Fatto, avanti ▶</button>
+        <button id="play">Riproduci</button>
+      </div>
+    </section>
+    <section>
+      <h2>Mosse libere</h2>
+      <div class="pad" id="pad"></div>
+      <div class="row" style="margin-top:8px">
+        <button id="scramble">Mescola</button>
+        <button id="reset">Cubo risolto</button>
+        <button id="view">Vista standard</button>
+      </div>
+    </section>
+  </aside>
+</main>
+<footer>Tastiera: U R F L D B gira lo strato, con Maiusc in senso inverso. Il giallo è in alto e il rosso verso di te, come deciso per l'app.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+  const stage = document.getElementById('stage');
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  stage.prepend(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+  camera.position.set(5.2, 4.6, 7.4);
+  camera.lookAt(0, -0.15, 0);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x445066, 0.75));
+  const key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(4, 8, 6); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xbfd4ff, 0.35); rim.position.set(-6, 2, -4); scene.add(rim);
+
+  // ombra morbida finta sotto il cubo
+  const sc = document.createElement('canvas'); sc.width = sc.height = 128;
+  const sg = sc.getContext('2d'); const gr = sg.createRadialGradient(64, 64, 4, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(0,0,0,.55)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); sg.fillStyle = gr; sg.fillRect(0, 0, 128, 128);
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 5.5), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false }));
+  shadow.rotation.x = -Math.PI / 2; shadow.position.y = -2.35; scene.add(shadow);
+
+  const cube = new THREE.Group(); scene.add(cube);
+  const pivot = new THREE.Group(); cube.add(pivot);
+
+  // giallo in alto, bianco sotto, rosso davanti, arancio dietro, verde a destra, blu a sinistra
+  const FACES = [
+    { n: [1, 0, 0], c: 'G' }, { n: [-1, 0, 0], c: 'B' }, { n: [0, 1, 0], c: 'Y' },
+    { n: [0, -1, 0], c: 'W' }, { n: [0, 0, 1], c: 'R' }, { n: [0, 0, -1], c: 'O' }];
+  const STYLES = {
+    classico: { body: 0x111214, bodyRough: .35, size: .86, radius: .1, rough: .22, depth: .02,
+      pal: { Y: '#ffd500', W: '#ffffff', R: '#c41e3a', O: '#ff5800', G: '#009e60', B: '#0051ba' } },
+    senza: { body: 0x1c1d22, bodyRough: .6, size: .955, radius: .17, rough: .5, depth: .035,
+      pal: { Y: '#ffe11a', W: '#f6f6f1', R: '#e8202f', O: '#ff7a12', G: '#19c25a', B: '#1f6fff' } },
+    morbido: { body: 0xf1efe9, bodyRough: .8, size: .8, radius: .22, rough: .75, depth: .03,
+      pal: { Y: '#ffd84d', W: '#ffffff', R: '#ff5d6c', O: '#ffa04d', G: '#4cd68b', B: '#5b8cff' } }
+  };
+  let style = 'classico';
+
+  function roundedRect(s, r) {
+    const h = s / 2, sh = new THREE.Shape();
+    sh.moveTo(-h + r, -h); sh.lineTo(h - r, -h); sh.quadraticCurveTo(h, -h, h, -h + r);
+    sh.lineTo(h, h - r); sh.quadraticCurveTo(h, h, h - r, h); sh.lineTo(-h + r, h);
+    sh.quadraticCurveTo(-h, h, -h, h - r); sh.lineTo(-h, -h + r); sh.quadraticCurveTo(-h, -h, -h + r, -h);
+    return sh;
+  }
+
+  const cubies = [];
+  function buildCubie(cb) {
+    while (cb.children.length) { const ch = cb.children.pop(); ch.geometry && ch.geometry.dispose(); }
+    const st = STYLES[style];
+    cb.add(new THREE.Mesh(new THREE.BoxGeometry(.97, .97, .97), new THREE.MeshStandardMaterial({ color: st.body, roughness: st.bodyRough })));
+    const geo = new THREE.ExtrudeGeometry(roundedRect(st.size, st.radius), { depth: st.depth, bevelEnabled: true, bevelThickness: .008, bevelSize: .008, bevelSegments: 2, curveSegments: 6 });
+    cb.userData.stickers = [];
+    for (const f of cb.userData.faces) {
+      const col = new THREE.Color(st.pal[f.c]).convertSRGBToLinear();
+      const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: col, roughness: st.rough, emissive: col.clone(), emissiveIntensity: 0 }));
+      const n = new THREE.Vector3(...f.n);
+      m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), n);
+      m.position.copy(n.clone().multiplyScalar(.485));
+      cb.add(m); cb.userData.stickers.push(m);
+    }
+  }
+  function buildSolved() {
+    for (const c of cubies) cube.remove(c);
+    cubies.length = 0;
+    for (let x = -1; x <= 1; x++) for (let y = -1; y <= 1; y++) for (let z = -1; z <= 1; z++) {
+      const cb = new THREE.Group(); cb.position.set(x, y, z);
+      cb.userData.faces = FACES.filter(f => (f.n[0] && f.n[0] === x) || (f.n[1] && f.n[1] === y) || (f.n[2] && f.n[2] === z));
+      buildCubie(cb); cube.add(cb); cubies.push(cb);
+    }
+  }
+  buildSolved();
+
+  // notazione: asse, strato, verso (rotazione attorno all'asse positivo)
+  const MOVES = { R: ['x', 1, -1], L: ['x', -1, 1], U: ['y', 1, -1], D: ['y', -1, 1], F: ['z', 1, -1], B: ['z', -1, 1] };
+  const DESC = { R: ['Destra su', 'Destra giù'], L: ['Sinistra giù', 'Sinistra su'], U: ['Sopra verso sinistra', 'Sopra verso destra'],
+    D: ['Sotto verso destra', 'Sotto verso sinistra'], F: ['Davanti in senso orario', 'Davanti in senso antiorario'],
+    B: ['Dietro, riga in alto verso sinistra', 'Dietro, riga in alto verso destra'] };
+  function parse(t) {
+    const [axis, layer, s] = MOVES[t[0]];
+    const prime = t.includes("'"), twice = t.includes('2');
+    return { t, f: t[0], axis, layer, sign: prime ? -s : s, turns: twice ? 2 : 1 };
+  }
+  const inverse = t => t.includes('2') ? t : t.includes("'") ? t[0] : t + "'";
+  function describe(t) {
+    const m = parse(t), d = DESC[m.f][t.includes("'") ? 1 : 0];
+    return m.turns === 2 ? d + ', due volte' : d;
+  }
+
+  const EASE = {
+    morbido: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+    rimbalzo: t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); },
+    meccanico: t => t
+  };
+  let ease = 'morbido', duration = 550;
+  const queue = []; let anim = null;
+  function enqueue(t, dur) { queue.push({ t, dur }); }
+  function startNext(now) {
+    const job = queue.shift(); if (!job) return;
+    const m = parse(job.t);
+    pivot.rotation.set(0, 0, 0);
+    for (const c of cubies) if (Math.round(c.position[m.axis]) === m.layer) pivot.attach(c);
+    anim = { m, start: now, dur: (job.dur || duration) * (m.turns === 2 ? 1.5 : 1), angle: m.sign * m.turns * Math.PI / 2 };
+    clearArrow();
+  }
+  const rm = new THREE.Matrix4();
+  function finish() {
+    for (const c of [...pivot.children]) {
+      cube.attach(c);
+      c.position.set(Math.round(c.position.x), Math.round(c.position.y), Math.round(c.position.z));
+      rm.makeRotationFromQuaternion(c.quaternion);
+      const e = rm.elements; for (const i of [0, 1, 2, 4, 5, 6, 8, 9, 10]) e[i] = Math.round(e[i]);
+      c.quaternion.setFromRotationMatrix(rm);
+    }
+    pivot.rotation.set(0, 0, 0); anim = null;
+  }
+
+  // frecce
+  const arrowMat = new THREE.MeshBasicMaterial({ color: 0xffffff, depthTest: false });
+  const outlineMat = new THREE.MeshBasicMaterial({ color: 0x0b0e14, depthTest: false });
+  const white = new THREE.Color(0xffffff), dim = new THREE.Color(0xc9d2e3);
+  let arrow = null, glowLayer = null;
+  function headGeo() {
+    const s = new THREE.Shape(); s.moveTo(-.28, 0); s.lineTo(.28, 0); s.lineTo(0, .42); s.lineTo(-.28, 0);
+    return new THREE.ExtrudeGeometry(s, { depth: .03, bevelEnabled: false });
+  }
+  function straightArrow(twice) {
+    const g = new THREE.Group();
+    const add = (geo, mat, y, sc) => { const m = new THREE.Mesh(geo, mat); m.position.y = y; if (sc) { m.scale.set(sc, sc, 1); m.position.z = -.02; } g.add(m); };
+    for (const [mat, sc] of [[outlineMat, 1.35], [arrowMat, 0]]) {
+      add(new THREE.BoxGeometry(.15, 1.7, .03), mat, -.25, sc ? 1 : 0);
+      if (sc) g.children[g.children.length - 1].scale.set(1.6, 1.05, 1);
+      add(headGeo(), mat, .55, sc ? 1.25 : 0);
+      if (twice) add(headGeo(), mat, .15, sc ? 1.25 : 0);
+    }
+    return g;
+  }
+  function arcArrow(sign, twice) {
+    const g = new THREE.Group(), R = .95, arc = Math.PI * 1.45, start = Math.PI * .3;
+    for (const [mat, tube, hs] of [[outlineMat, .11, 1.25], [arrowMat, .07, 1]]) {
+      const tor = new THREE.Mesh(new THREE.TorusGeometry(R, tube, 8, 48, arc), mat);
+      tor.rotation.z = start; tor.position.z = mat === outlineMat ? -.02 : 0; g.add(tor);
+      const heads = twice ? [0, .5] : [0];
+      for (const off of heads) {
+        const a = sign > 0 ? start + arc - off : start + off;
+        const h = new THREE.Mesh(headGeo(), mat);
+        h.position.set(R * Math.cos(a), R * Math.sin(a), mat === outlineMat ? -.02 : 0);
+        h.rotation.z = sign > 0 ? a : a + Math.PI; h.scale.set(hs, hs, 1); g.add(h);
+      }
+    }
+    return g;
+  }
+  function makeArrow(t) {
+    const m = parse(t), twice = m.turns === 2;
+    const axis = new THREE.Vector3(m.axis === 'x' ? 1 : 0, m.axis === 'y' ? 1 : 0, m.axis === 'z' ? 1 : 0);
+    if (m.axis === 'z' && m.layer === 1) { const g = arcArrow(m.sign, twice); g.position.set(0, 0, 1.56); return g; }
+    let n, pos;
+    if (m.axis === 'x') { n = new THREE.Vector3(0, 0, 1); pos = new THREE.Vector3(m.layer, 0, 1.56); }
+    else if (m.axis === 'y') { n = new THREE.Vector3(0, 0, 1); pos = new THREE.Vector3(0, m.layer, 1.56); }
+    else { n = new THREE.Vector3(0, 1, 0); pos = new THREE.Vector3(0, 1.56, m.layer); }
+    const d = axis.clone().multiplyScalar(m.sign).cross(n).normalize();
+    const g = straightArrow(twice);
+    g.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(d.clone().cross(n), d, n));
+    g.position.copy(pos); return g;
+  }
+  function clearArrow() {
+    if (arrow) { cube.remove(arrow); arrow = null; }
+    if (glowLayer) { for (const c of cubies) for (const s of c.userData.stickers) s.material.emissiveIntensity = 0; glowLayer = null; }
+  }
+  function showPending(t) {
+    clearArrow(); if (!t) return;
+    if (optArrow.checked) { arrow = makeArrow(t); arrow.traverse(o => { if (o.isMesh) o.renderOrder = o.material === arrowMat ? 3 : 2; }); cube.add(arrow); }
+    if (optGlow.checked) glowLayer = parse(t);
+  }
+
+  // player della formula
+  const algSel = document.getElementById('alg'), seqEl = document.getElementById('seq');
+  let tokens = [], idx = 0, playing = false, waitUntil = 0;
+  function loadAlg() { tokens = algSel.value.split(' '); idx = 0; setPlaying(false); renderSeq(); }
+  function renderSeq() {
+    seqEl.innerHTML = tokens.map((t, i) => `<span class="${i < idx ? 'done' : i === idx ? 'next' : ''}">${t}</span>`).join('');
+    const t = tokens[idx];
+    document.getElementById('capMove').textContent = t || '✓';
+    document.getElementById('capText').innerHTML = t ? `${describe(t)}<small>Prossima mossa · ${idx + 1} di ${tokens.length}</small>` : 'Formula finita<small>Premi Indietro o scegli un’altra formula</small>';
+  }
+  function stepForward() { if (idx >= tokens.length) return; enqueue(tokens[idx]); idx++; renderSeq(); }
+  function stepBack() { if (idx <= 0) return; idx--; enqueue(inverse(tokens[idx])); renderSeq(); }
+  function setPlaying(p) { playing = p; document.getElementById('play').textContent = p ? 'Pausa' : 'Riproduci'; document.getElementById('play').setAttribute('aria-pressed', p); }
+
+  algSel.onchange = loadAlg;
+  document.getElementById('step').onclick = () => { setPlaying(false); stepForward(); };
+  document.getElementById('back').onclick = () => { setPlaying(false); stepBack(); };
+  document.getElementById('play').onclick = () => { if (idx >= tokens.length) { idx = 0; buildSolved(); } waitUntil = performance.now() + duration; setPlaying(!playing); renderSeq(); };
+
+  const pad = document.getElementById('pad');
+  for (const f of 'URFLDB') for (const t of [f, f + "'"]) {
+    const b = document.createElement('button'); b.textContent = t; b.setAttribute('aria-label', describe(t));
+    b.onclick = () => enqueue(t); pad.appendChild(b);
+  }
+  document.getElementById('scramble').onclick = () => {
+    setPlaying(false); let last = '';
+    for (let i = 0; i < 18; i++) { let f; do f = 'URFLDB'[Math.random() * 6 | 0]; while (f === last); last = f; enqueue(f + ["", "'", "2"][Math.random() * 3 | 0], 160); }
+  };
+  document.getElementById('reset').onclick = () => { queue.length = 0; if (anim) finish(); buildSolved(); loadAlg(); };
+  addEventListener('keydown', e => {
+    if (e.target.tagName === 'SELECT' || e.metaKey || e.ctrlKey) return;
+    const f = e.key.toUpperCase(); if ('URFLDB'.includes(f) && f.length === 1) enqueue(e.shiftKey ? f + "'" : f);
+  });
+
+  function chips(id, fn) {
+    const el = document.getElementById(id);
+    el.onclick = e => { const b = e.target.closest('button'); if (!b) return;
+      for (const x of el.children) x.setAttribute('aria-pressed', x === b); fn(b.dataset.v); };
+  }
+  chips('styleChips', v => { style = v; for (const c of cubies) buildCubie(c); });
+  chips('bgChips', v => { stage.className = 'bg-' + v; });
+  chips('easeChips', v => { ease = v; });
+  const speed = document.getElementById('speed');
+  speed.oninput = () => { duration = +speed.value; document.getElementById('speedVal').textContent = duration + ' ms'; };
+  const optArrow = document.getElementById('optArrow'), optGlow = document.getElementById('optGlow');
+  optArrow.onchange = optGlow.onchange = () => { if (!anim) showPending(tokens[idx]); };
+
+  // trascinamento con inerzia
+  const baseQ = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, 0));
+  let drag = null, vel = { x: 0, y: 0 };
+  const camRight = new THREE.Vector3(), worldY = new THREE.Vector3(0, 1, 0);
+  function spin(dx, dy) {
+    camRight.setFromMatrixColumn(camera.matrixWorld, 0);
+    cube.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(worldY, dx * .009));
+    cube.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(camRight, dy * .009));
+  }
+  stage.addEventListener('pointerdown', e => { if (e.target.closest('#caption')) return; drag = { x: e.clientX, y: e.clientY }; stage.setPointerCapture(e.pointerId); vel = { x: 0, y: 0 }; });
+  stage.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; spin(dx, dy); vel = { x: dx, y: dy }; drag = { x: e.clientX, y: e.clientY }; });
+  stage.addEventListener('pointerup', () => { drag = null; });
+  let viewAnim = null;
+  document.getElementById('view').onclick = () => { viewAnim = { from: cube.quaternion.clone(), start: performance.now() }; vel = { x: 0, y: 0 }; };
+
+  function resize() { const r = stage.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); }
+  new ResizeObserver(resize).observe(stage); resize();
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let shownFor = null;
+  function frame(now) {
+    if (!anim && queue.length) startNext(now);
+    if (anim) {
+      const t = Math.min(1, (now - anim.start) / anim.dur);
+      pivot.rotation[anim.m.axis] = anim.angle * EASE[ease](t);
+      if (t >= 1) { finish(); shownFor = null; waitUntil = now + duration * .9; }
+    }
+    if (!anim && !queue.length) {
+      if (shownFor !== idx) { showPending(tokens[idx]); shownFor = idx; }
+      if (playing && now >= waitUntil) { if (idx < tokens.length) stepForward(); else setPlaying(false); }
+    } else if (shownFor !== null && queue.length) { shownFor = null; }
+    const pulse = reduced ? 1 : .5 + .5 * Math.sin(now / 260);
+    if (arrow) arrowMat.color.copy(dim).lerp(white, pulse);
+    if (glowLayer) for (const c of cubies) {
+      const on = Math.round(c.position[glowLayer.axis]) === glowLayer.layer;
+      for (const s of c.userData.stickers) s.material.emissiveIntensity = on ? .1 + .22 * pulse : 0;
+    }
+    if (!drag && (Math.abs(vel.x) + Math.abs(vel.y) > .05)) { spin(vel.x, vel.y); vel.x *= .92; vel.y *= .92; }
+    if (viewAnim) { const k = Math.min(1, (now - viewAnim.start) / 500); cube.quaternion.copy(viewAnim.from).slerp(baseQ, EASE.morbido(k)); if (k >= 1) viewAnim = null; }
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  loadAlg();
+  requestAnimationFrame(frame);
+})();
+</script>
