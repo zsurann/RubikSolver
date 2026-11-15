@@ -40,6 +40,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - [Solver mosse minime](issues/17-task-solver-minime.md): min2phase.js in Web Worker, licenza MIT; ≤21 mosse su 1000 cubi.
 - [Scansione](issues/18-task-scansione.md): griglia + Lab + abbinamento ai pezzi (ungherese) + rotazioni facce; scatto automatico, guida 3D, avviso centro; e2e con fotocamera finta ok.
 - [Ritocco](issues/19-task-ritocco.md): EditScreen con tavolozza e tocco sugli adesivi, lampeggio incerti/sospetti, diagnose(), riscansione di una faccia, inserimento a mano.
+- [Risolvi il mio](issues/20-task-risolvi-il-mio.md): scansione → ritocco → scelta metodo → guida una mossa alla volta con schede di fase, presa e "Mi sono perso"; e2e fino a cubo risolto.
 
 ## Not yet specified
 
