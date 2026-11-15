@@ -31,6 +31,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - [Cosa salva l'account](issues/08-grilling-account.md): login facoltativo (Google, email+password, link magico); salva lezioni, tempi, preferenze, cubi scansionati; foto mai salvate; ospite locale unito al login; account solo 14+; elimina/esporta/azzera.
 - [UX della scansione](issues/09-grilling-ux-scansione.md): ordine fisso guidato dal cubo 3D, scatto automatico, ritocco su cubo 3D, inserimento a mano se niente fotocamera, guida ai pezzi sospetti se lo stato è impossibile.
 - [Piano di costruzione](issues/10-grilling-piano-costruzione.md): rilascio unico a funzioni complete; Claude un task per sessione con PR; test sulla logica; *.pages.dev; ticket task 13–27.
+- [Testi delle lezioni](issues/11-prototype-testi-lezioni.md): bozza approvata come modello; tono amichevole e diretto, ~8 schermate, nomignoli per le formule, "Attento a…" con demo errore/giusto.
 
 ## Not yet specified
 
