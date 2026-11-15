@@ -1,10 +1,12 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Home } from './app/Home'
 import { SettingsScreen } from './app/SettingsScreen'
+import { ProgressProvider } from './app/progress'
 import { SettingsProvider, useSettings } from './app/settings'
 import { Welcome } from './app/Welcome'
 import { CubeDemo } from './cube3d/CubeDemo'
 import { t } from './i18n'
+import { Learn } from './learn/Learn'
 import { ScanDemo } from './scan/ScanDemo'
 import { SolveMine } from './solve/SolveMine'
 
@@ -34,6 +36,7 @@ function Router() {
     '#cubo': () => <CubeDemo />,
     '#scansione': () => <ScanDemo />,
   }
+  if (hash.startsWith('#impara')) pages[hash] = () => <Learn lang={lang} id={hash.slice('#impara-'.length) || undefined} />
   const page = pages[hash]
   if (!page) return <Home lang={lang} />
   return (
@@ -52,7 +55,9 @@ function Router() {
 export default function App() {
   return (
     <SettingsProvider>
-      <Router />
+      <ProgressProvider>
+        <Router />
+      </ProgressProvider>
     </SettingsProvider>
   )
 }

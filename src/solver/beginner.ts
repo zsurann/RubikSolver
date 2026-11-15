@@ -161,5 +161,31 @@ export function solveBeginner(start: State): Phase[] {
   return phases
 }
 
+/** La fase è completa (con tutte quelle prima)? Per gli esercizi. */
+export function phaseDone(id: PhaseId, s: State): boolean {
+  const f2l = firstTwoLayers(s)
+  switch (id) {
+    case 'daisy': return daisy(s).every(Boolean) || crossEdges(s).every(Boolean)
+    case 'whiteCross': return crossEdges(s).every(Boolean)
+    case 'whiteCorners': return crossEdges(s).every(Boolean) && firstCorners(s).every(Boolean)
+    case 'middleLayer': return f2l
+    case 'yellowCross': return f2l && yellowCross(s)
+    case 'yellowEdges': return f2l && yellowCross(s) && yellowEdges(s)
+    case 'yellowCornersPosition': return f2l && yellowCross(s) && yellowEdges(s) && yellowCornersPlaced(s)
+    case 'yellowCornersOrientation': return isSolved(s)
+  }
+}
+
+/** Stato del cubo all'inizio di ogni fase (per demo ed esercizi mirati). */
+export function phaseStarts(start: State): Record<PhaseId, State> {
+  const out = {} as Record<PhaseId, State>
+  let s = start
+  for (const p of solveBeginner(start)) {
+    out[p.id] = s
+    s = applyAlg(s, p.steps.flatMap((st) => st.moves))
+  }
+  return out
+}
+
 /** Tutte le mosse in fila (per riprodurle sul cubo 3D). */
 export const flatten = (phases: Phase[]): Move[] => phases.flatMap((p) => p.steps.flatMap((st) => st.moves))

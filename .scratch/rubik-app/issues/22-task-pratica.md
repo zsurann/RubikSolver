@@ -1,7 +1,7 @@
 ---
 labels: [wayfinder:task]
 status: open
-assignee:
+assignee: claude
 blocked_by: [15-task-cubo-3d, 16-task-solver-principianti]
 ---
 ## Question

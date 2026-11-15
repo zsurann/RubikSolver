@@ -49,3 +49,21 @@ describe('solver metodo principianti', () => {
     expect(() => solveBeginner(SOLVED.slice(0, 7) + SOLVED[19] + SOLVED.slice(8, 19) + SOLVED[7] + SOLVED.slice(20))).toThrow('flip')
   })
 })
+
+describe('phaseDone e phaseStarts', () => {
+  it('ogni fase parte non completata e finisce completata', async () => {
+    const { phaseDone, phaseStarts, solveBeginner } = await import('./beginner')
+    const rnd = seeded(77)
+    for (let k = 0; k < 50; k++) {
+      const start = applyAlg(SOLVED, scramble(25, rnd))
+      const starts = phaseStarts(start)
+      const phases = solveBeginner(start)
+      phases.forEach((p, i) => {
+        const end = applyAlg(starts[p.id], p.steps.flatMap((s) => s.moves))
+        expect(phaseDone(p.id, end)).toBe(true)
+        if (p.steps.length) expect(phaseDone(p.id, starts[p.id])).toBe(false)
+        if (i + 1 < phases.length) expect(end).toBe(starts[phases[i + 1].id])
+      })
+    }
+  })
+})

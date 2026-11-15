@@ -42,6 +42,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - [Ritocco](issues/19-task-ritocco.md): EditScreen con tavolozza e tocco sugli adesivi, lampeggio incerti/sospetti, diagnose(), riscansione di una faccia, inserimento a mano.
 - [Risolvi il mio](issues/20-task-risolvi-il-mio.md): scansione → ritocco → scelta metodo → guida una mossa alla volta con schede di fase, presa e "Mi sono perso"; e2e fino a cubo risolto.
 - [Home e navigazione](issues/24-task-home-navigazione.md): benvenuto, home, impostazioni salvate nel browser, router a hash, stile comune chiaro/scuro.
+- [Impara](issues/21-task-impara.md): 9 lezioni IT/EN con demo, sblocco progressivo, esercizio notazione ed esercizi di fase con Aiuto.
 
 ## Not yet specified
 
