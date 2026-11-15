@@ -101,7 +101,7 @@ export function ScanScreen({ lang, onDone, onManual, only, base }: Props) {
       <section style={box}>
         <h2>{t('scanNoCameraTitle', lang)}</h2>
         <p>{t('scanNoCamera', lang)}</p>
-        <button type="button" onClick={onManual}>{t('scanManual', lang)}</button>
+        <button type="button" className="btn" onClick={onManual}>{t('scanManual', lang)}</button>
       </section>
     )
 
@@ -130,14 +130,14 @@ export function ScanScreen({ lang, onDone, onManual, only, base }: Props) {
           <div style={overlay}>
             <p>{t('scanWrongCenter', lang).replace('{expected}', t(COLOR_KEY[face], lang)).replace('{seen}', t(COLOR_KEY[phase.seen], lang))}</p>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-              <button type="button" onClick={() => { stable.current = null; setPhase({ kind: 'scan', step }) }}>{t('scanRetry', lang)}</button>
-              <button type="button" onClick={() => capture(step, phase.cells, true)}>{t('scanKeep', lang)}</button>
+              <button type="button" className="btn" onClick={() => { stable.current = null; setPhase({ kind: 'scan', step }) }}>{t('scanRetry', lang)}</button>
+              <button type="button" className="btn" onClick={() => capture(step, phase.cells, true)}>{t('scanKeep', lang)}</button>
             </div>
           </div>
         )}
       </div>
       <p style={{ color: 'var(--muted)', margin: 0 }}>{t('scanHint', lang)}</p>
-      <button type="button" disabled={phase.kind !== 'scan' || live.length < 9} onClick={() => capture(step, live.map((x) => x.rgb))}>
+      <button type="button" className="btn" disabled={phase.kind !== 'scan' || live.length < 9} onClick={() => capture(step, live.map((x) => x.rgb))}>
         {t('scanCapture', lang)}
       </button>
     </section>
@@ -160,7 +160,7 @@ function TurnGuide({ from, turn, text, ready, onReady }: { from: Move[]; turn: M
       <div style={{ height: 'min(240px, 50vw)' }}>
         <CubeView cube={player.cube} current={player.current} onDone={player.done} arrows={false} glow={false} />
       </div>
-      <button type="button" onClick={onReady}>{ready}</button>
+      <button type="button" className="btn" onClick={onReady}>{ready}</button>
     </div>
   )
 }

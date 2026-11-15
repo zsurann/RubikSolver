@@ -49,9 +49,9 @@ export function SolveMine({ lang }: { lang: Lang }) {
     case 'choose': {
       const state = step.state
       return (
-        <section style={{ display: 'grid', gap: 12, padding: 16, maxWidth: 560, margin: '0 auto' }}>
+        <section className="page">
           <h2 style={{ margin: 0 }}>{t('chooseTitle', lang)}</h2>
-          <button type="button" style={option} onClick={() => setStep({ kind: 'guide', state, ...itemsFromPhases(solveBeginner(state)), key: Date.now() })}>
+          <button type="button" className="btn" style={option} onClick={() => setStep({ kind: 'guide', state, ...itemsFromPhases(solveBeginner(state)), key: Date.now() })}>
             <b>{t('methodBeginner', lang)}</b>
             <span>{t('methodBeginnerText', lang)}</span>
           </button>
@@ -70,10 +70,10 @@ export function SolveMine({ lang }: { lang: Lang }) {
       )
     }
     case 'thinking':
-      return <p style={{ padding: 16, textAlign: 'center' }}>{t('thinking', lang)}</p>
+      return <p className="page" style={{ textAlign: 'center' }}>{t('thinking', lang)}</p>
     case 'guide':
       return <Guide key={step.key} lang={lang} start={step.state} items={step.items} phases={step.phases} onLost={rescan} onRestart={rescan} />
   }
 }
 
-const option = { display: 'grid', gap: 4, textAlign: 'left', padding: 16, borderRadius: 14, border: '1px solid #c9ced8', background: 'transparent', color: 'inherit', font: 'inherit' } as const
+const option = { display: 'grid', gap: 4, textAlign: 'left', padding: 16, borderRadius: 14, border: '1px solid var(--line)', background: 'var(--surface)', color: 'inherit', font: 'inherit', cursor: 'pointer' } as const

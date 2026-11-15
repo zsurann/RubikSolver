@@ -52,10 +52,10 @@ export function EditScreen({ lang, initial, uncertain = [], onConfirm, onRescanF
   })()
 
   return (
-    <section style={{ display: 'grid', gap: 12, padding: 16, maxWidth: 560, margin: '0 auto' }}>
+    <section className="page">
       <h2 style={{ margin: 0 }}>{t('editTitle', lang)}</h2>
       <p style={{ margin: 0, color: 'var(--muted)' }}>{t('editHint', lang)}</p>
-      <div style={{ aspectRatio: '1', maxWidth: '100%', borderRadius: 18, overflow: 'hidden', background: 'radial-gradient(120% 90% at 50% 35%, #ffffff 0%, #cfd4dc 80%)' }}>
+      <div className="stage" style={{ aspectRatio: '1' }}>
         <CubeView cube={state} current={null} onDone={() => {}} arrows={false} glow={false} blink={blink} onStickerClick={paint} label={t('editTitle', lang)} />
       </div>
       <div role="radiogroup" aria-label={t('editPalette', lang)} style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 }}>
@@ -66,18 +66,18 @@ export function EditScreen({ lang, initial, uncertain = [], onConfirm, onRescanF
             role="radio"
             aria-checked={color === f}
             onClick={() => setColor(f)}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 10, borderRadius: 12, border: color === f ? '3px solid var(--accent)' : '1px solid #c9ced8', background: 'transparent', color: 'inherit', font: 'inherit' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 10, borderRadius: 12, border: color === f ? '3px solid var(--accent)' : '1px solid var(--line)', background: 'var(--surface)', color: 'inherit', font: 'inherit' }}
           >
             <span style={{ width: 26, height: 26, borderRadius: 6, background: STICKER_HEX[f], border: '1px solid #0003' }} />
             {name(f)}
           </button>
         ))}
       </div>
-      <p role="status" style={{ margin: 0, padding: 12, borderRadius: 12, background: d.kind === 'ok' ? '#d9f3e3' : '#fde8d7', color: '#1b2230' }}>{message}</p>
+      <p role="status" className={`status${d.kind === 'ok' ? ' ok' : ''}`}>{message}</p>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <button type="button" disabled={d.kind !== 'ok'} onClick={() => onConfirm(state)}>{t('editConfirm', lang)}</button>
+        <button type="button" className="btn btn-primary" disabled={d.kind !== 'ok'} onClick={() => onConfirm(state)}>{t('editConfirm', lang)}</button>
         {onRescanFace && worstFace && (
-          <button type="button" onClick={() => onRescanFace(worstFace)}>
+          <button type="button" className="btn" onClick={() => onRescanFace(worstFace)}>
             {t('editRescan', lang).replace('{color}', name(worstFace))}
           </button>
         )}

@@ -5,14 +5,16 @@ import { CubeView } from '../cube3d/CubeView'
 import { describeMove } from '../cube3d/describe'
 import { useCubePlayer } from '../cube3d/player'
 import { t, type Key, type Lang } from '../i18n'
+import { useSettings } from '../app/settings'
 import type { GuidePhase, Item } from './items'
 
 type Props = { lang: Lang; start: State; items: Item[]; phases: GuidePhase[]; onLost: () => void; onRestart: () => void }
 
-const MS = 650
 
 /** Guida una mossa alla volta: freccia sul cubo 3D, tu la fai sul cubo vero e tocchi "Fatto". */
 export function Guide({ lang, start, items, phases, onLost, onRestart }: Props) {
+  const { settings } = useSettings()
+  const MS = settings.speed
   const player = useCubePlayer(start)
   const [idx, setIdx] = useState(0)
   const [introFor, setIntroFor] = useState<number | null>(items.length ? 0 : null)
@@ -45,16 +47,16 @@ export function Guide({ lang, start, items, phases, onLost, onRestart }: Props) 
 
   if (done && player.idle)
     return (
-      <section style={wrap}>
+      <section className="page">
         <h2 style={{ margin: 0 }}>{t('solvedTitle', lang)}</h2>
         <p>{t('solvedText', lang).replace('{n}', String(items.length))}</p>
         <Stage cube={player.cube} />
-        <button type="button" style={primary} onClick={onRestart}>{t('solveAnother', lang)}</button>
+        <button type="button" className="btn btn-primary" onClick={onRestart}>{t('solveAnother', lang)}</button>
       </section>
     )
 
   return (
-    <section style={wrap}>
+    <section className="page">
       <div>
         <p style={{ margin: 0, color: 'var(--muted)' }}>
           {t('phaseLabel', lang)} {phaseIdx + 1} {t('stepOf', lang)} {phases.length} · {t('moveLabel', lang)} {Math.min(idx + 1, items.length)} {t('stepOf', lang)} {items.length}
@@ -63,14 +65,14 @@ export function Guide({ lang, start, items, phases, onLost, onRestart }: Props) 
         <progress max={items.length} value={idx} style={{ width: '100%' }} aria-label={t('progress', lang)} />
       </div>
       <div style={{ position: 'relative' }}>
-        <Stage cube={player.cube} current={player.current} onDone={player.done} pending={introFor === null ? item?.move : null} viewKey={viewKey} />
+        <Stage cube={player.cube} current={player.current} onDone={player.done} pending={introFor === null ? item?.move : null} viewKey={viewKey} arrows={settings.arrows} glow={settings.glow} />
         {introFor !== null && player.idle && (
           <div style={card}>
             <h3 style={{ margin: 0 }}>{phaseName(phases[introFor])}</h3>
             <p style={{ margin: 0 }}>{t(`goal_${phases[introFor].id}` as Key, lang)}</p>
             <p style={{ margin: 0, fontWeight: 700 }}>{t('holdCube', lang).replace('{front}', front)}</p>
             {phases[introFor].id === 'yellowCornersOrientation' && <p style={{ margin: 0 }}>{t('looksBroken', lang)}</p>}
-            <button type="button" style={primary} onClick={startPhase}>{t('startPhase', lang)}</button>
+            <button type="button" className="btn btn-primary" onClick={startPhase}>{t('startPhase', lang)}</button>
           </div>
         )}
       </div>
@@ -88,10 +90,10 @@ export function Guide({ lang, start, items, phases, onLost, onRestart }: Props) 
         </div>
       )}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <button type="button" onClick={back} disabled={idx === 0 || introFor !== null}>◀ {t('back', lang)}</button>
-        <button type="button" style={{ ...primary, opacity: introFor !== null ? 0.5 : 1 }} onClick={next} disabled={introFor !== null || !player.idle}>{t('next', lang)} ▶</button>
-        <button type="button" onClick={() => setViewKey((k) => k + 1)}>{t('standardView', lang)}</button>
-        <button type="button" onClick={onLost}>{t('imLost', lang)}</button>
+        <button type="button" className="btn" onClick={back} disabled={idx === 0 || introFor !== null}>◀ {t('back', lang)}</button>
+        <button type="button" className="btn btn-primary" onClick={next} disabled={introFor !== null || !player.idle}>{t('next', lang)} ▶</button>
+        <button type="button" className="btn" onClick={() => setViewKey((k) => k + 1)}>{t('standardView', lang)}</button>
+        <button type="button" className="btn" onClick={onLost}>{t('imLost', lang)}</button>
       </div>
     </section>
   )
@@ -99,12 +101,10 @@ export function Guide({ lang, start, items, phases, onLost, onRestart }: Props) 
 
 function Stage(props: Omit<Parameters<typeof CubeView>[0], 'current' | 'onDone'> & Partial<Pick<Parameters<typeof CubeView>[0], 'current' | 'onDone'>>) {
   return (
-    <div style={{ aspectRatio: '4 / 3.4', borderRadius: 18, overflow: 'hidden', background: 'radial-gradient(120% 90% at 50% 35%, #ffffff 0%, #cfd4dc 80%)' }}>
+    <div className="stage">
       <CubeView current={null} onDone={() => {}} {...props} />
     </div>
   )
 }
 
-const wrap = { display: 'grid', gap: 12, padding: 16, maxWidth: 640, margin: '0 auto' } as const
-const primary = { background: 'var(--accent)', color: '#fff', border: 0, borderRadius: 12, padding: '10px 16px', fontWeight: 700 } as const
 const card = { position: 'absolute', inset: 12, display: 'grid', alignContent: 'center', gap: 10, padding: 20, borderRadius: 16, background: 'rgba(255,255,255,.94)', color: '#1b2230', textAlign: 'center' } as const
