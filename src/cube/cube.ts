@@ -25,7 +25,7 @@ function stickerPos(face: Face, i: number): Vec {
     case 'B': return [1 - c, 1 - r, -1]
   }
 }
-const STICKERS = FACES.flatMap((f) => Array.from({ length: 9 }, (_, i) => ({ pos: stickerPos(f, i), n: NORMAL[f] })))
+export const STICKERS = FACES.flatMap((f) => Array.from({ length: 9 }, (_, i) => ({ pos: stickerPos(f, i), n: NORMAL[f] })))
 const key = (p: Vec, n: Vec) => `${p}|${n}`
 const INDEX = new Map(STICKERS.map((s, i) => [key(s.pos, s.n), i]))
 
@@ -37,7 +37,7 @@ function rot(v: Vec, a: Vec, s: number): Vec {
 }
 
 // [asse, strati coinvolti, verso] per la mossa base (senza ' o 2).
-const BASE: Record<string, [keyof typeof AXIS, number[], number]> = {
+export const BASE: Record<string, [keyof typeof AXIS, number[], number]> = {
   R: ['x', [1], -1], L: ['x', [-1], 1], U: ['y', [1], -1], D: ['y', [-1], 1], F: ['z', [1], -1], B: ['z', [-1], 1],
   x: ['x', [-1, 0, 1], -1], y: ['y', [-1, 0, 1], -1], z: ['z', [-1, 0, 1], -1],
 }

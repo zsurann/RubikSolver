@@ -1,8 +1,10 @@
+import { CubeDemo } from './cube3d/CubeDemo'
 import { detectLang, t } from './i18n'
 
 const lang = detectLang()
 
 export default function App() {
+  if (location.hash === '#cubo') return <CubeDemo />
   return (
     <main style={{ padding: 'max(24px, env(safe-area-inset-top)) 16px', maxWidth: 560, margin: '0 auto' }}>
       <h1>{t('appName', lang)}</h1>
