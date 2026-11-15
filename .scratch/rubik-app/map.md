@@ -21,6 +21,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 ## Decisions so far
 
 - [Input, modalità, lingua, progressi](issues/00-grilling-iniziale.md): web app; fotocamera + ritocco manuale; tre modalità; soluzione a scelta (principianti/minime); IT+EN; account cloud.
+- [Backend account](issues/04-research-backend-account.md): Supabase Free in UE (Frankfurt), SMTP esterno in produzione; alternativa Cloudflare.
 
 ## Not yet specified
 
