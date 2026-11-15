@@ -5,7 +5,8 @@ export type Env = {
   DB: D1Database
   ASSETS: Fetcher
   BETTER_AUTH_SECRET: string
-  BETTER_AUTH_URL: string
+  /** indirizzo pubblico; se manca si usa quello della richiesta */
+  BETTER_AUTH_URL?: string
   GOOGLE_CLIENT_ID?: string
   GOOGLE_CLIENT_SECRET?: string
   RESEND_API_KEY?: string

@@ -6,8 +6,8 @@
   "compatibility_flags": ["nodejs_compat"],
   "assets": { "directory": "./dist", "not_found_handling": "single-page-application", "run_worker_first": ["/api/*"] },
   "d1_databases": [
-    { "binding": "DB", "database_name": "cubo-facile", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" }
+    { "binding": "DB", "database_name": "cubo-facile", "database_id": "b925be45-7b6f-4272-b8a0-1d0991355c7e", "migrations_dir": "migrations" }
   ],
-  "vars": { "EMAIL_FROM": "Cubo Facile <noreply@example.com>", "BETTER_AUTH_URL": "http://localhost:8787" },
+  "vars": { "EMAIL_FROM": "Cubo Facile <noreply@example.com>" },
   "observability": { "enabled": true }
 }
