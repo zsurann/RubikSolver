@@ -11,7 +11,10 @@ export function Home({ lang }: { lang: Lang }) {
     <main className="page">
       <div className="topbar">
         <h1>{t('appName', lang)}</h1>
-        <a href="#impostazioni" className="btn" aria-label={t('settings', lang)}>⚙</a>
+        <span className="row">
+          <a href="#account" className="btn">{t('account', lang)}</a>
+          <a href="#impostazioni" className="btn" aria-label={t('settings', lang)}>⚙</a>
+        </span>
       </div>
       <p className="muted" style={{ fontSize: '1.1rem' }}>{t('tagline', lang)}</p>
       <nav style={{ display: 'grid', gap: 12 }}>

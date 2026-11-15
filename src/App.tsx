@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
+import { Account, NewPassword } from './app/Account'
 import { Home } from './app/Home'
 import { SettingsScreen } from './app/SettingsScreen'
 import { ProgressProvider } from './app/progress'
@@ -35,6 +36,8 @@ function Router() {
     '#risolvi': () => <SolveMine lang={lang} />,
     '#impostazioni': () => <SettingsScreen />,
     '#pratica': () => <Practice lang={lang} />,
+    '#account': () => <Account lang={lang} />,
+    '#nuova-password': () => <NewPassword lang={lang} />,
     '#cubo': () => <CubeDemo />,
     '#scansione': () => <ScanDemo />,
   }

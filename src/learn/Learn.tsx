@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { authClient } from '../app/auth'
 import { useProgress } from '../app/progress'
 import { useSettings } from '../app/settings'
 import { applyAlg, parseAlg, SOLVED, type Move } from '../cube/cube'
@@ -68,6 +69,7 @@ function LessonView({ lang, lesson }: { lang: Lang; lesson: Lesson }) {
   const demo = useMemo(() => (screen?.demo ? demoOf(screen.demo, lesson.id) : null), [screen, lesson.id])
   const player = useCubePlayer(demo?.start ?? SOLVED)
   const next = LESSONS[LESSONS.indexOf(lesson) + 1]
+  const { data: session } = authClient.useSession()
 
   const go = (k: number) => {
     setI(k)
@@ -123,6 +125,11 @@ function LessonView({ lang, lesson }: { lang: Lang; lesson: Lesson }) {
                 {next && <a className="btn btn-primary" href={`#impara-${next.id}`}>{t('nextLesson', lang)} ▶</a>}
                 <a className="btn" href="#impara">{t('backToLessons', lang)}</a>
               </div>
+              {!session && (
+                <p className="muted">
+                  {t('saveProgressInvite', lang)} <a href="#account">{t('createAccount', lang)}</a>
+                </p>
+              )}
             </div>
           )}
           <button type="button" className="btn" onClick={() => go(lesson.screens.length - 1)}>◀ {t('back', lang)}</button>

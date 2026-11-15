@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useProgress } from '../app/progress'
 import type { Face, State } from '../cube/cube'
 import { EditScreen } from '../edit/EditScreen'
 import { EMPTY } from '../edit/diagnose'
@@ -21,6 +22,7 @@ type Step =
 export function SolveMine({ lang }: { lang: Lang }) {
   const [step, setStep] = useState<Step>({ kind: 'scan' })
   const rescan = () => setStep({ kind: 'scan' })
+  const { update } = useProgress()
 
   switch (step.kind) {
     case 'scan':
@@ -41,7 +43,10 @@ export function SolveMine({ lang }: { lang: Lang }) {
           lang={lang}
           initial={scan?.state ?? EMPTY}
           uncertain={scan?.uncertain}
-          onConfirm={(state) => setStep({ kind: 'choose', state })}
+          onConfirm={(state) => {
+            update((p) => ({ ...p, scans: [...p.scans, { state, at: new Date().toISOString() }].slice(-50) }))
+            setStep({ kind: 'choose', state })
+          }}
           onRescanFace={scan && ((only) => setStep({ kind: 'scan', only, base: scan }))}
         />
       )
