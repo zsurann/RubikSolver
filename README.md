@@ -21,3 +21,7 @@ Collegamento Git (una volta, dalla dashboard Cloudflare):
 3. Environment variable `NODE_VERSION` = `22`.
 
 Ogni push crea un'anteprima `*.pages.dev`.
+
+## Licenze di terze parti
+
+- [min2phase.js](https://github.com/cs0x7f/min2phase.js) di Chen Shuang: doppia licenza MIT o GPL-3.0; usato con licenza **MIT** (Copyright (c) 2023 Chen Shuang).

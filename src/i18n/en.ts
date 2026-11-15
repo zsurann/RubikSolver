@@ -37,4 +37,5 @@ export const en: typeof it = {
   standardView: 'Standard view',
   dragHint: 'Drag to turn the cube',
   formulaDone: 'Formula finished',
+  shortSolution: 'Short solution',
 }

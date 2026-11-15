@@ -35,4 +35,5 @@ export const it = {
   standardView: 'Vista standard',
   dragHint: 'Trascina per girare il cubo',
   formulaDone: 'Formula finita',
+  shortSolution: 'Soluzione breve',
 }

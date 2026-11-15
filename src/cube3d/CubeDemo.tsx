@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { scramble, SOLVED } from '../cube/cube'
 import { detectLang, t } from '../i18n'
+import { solveMinimal } from '../solver/minimal'
 import { CubeView } from './CubeView'
 import { describeMove } from './describe'
 import { useCubePlayer, useSequence } from './player'
@@ -34,6 +35,7 @@ export function CubeDemo() {
         <button type="button" onClick={() => seq.setPlaying(!seq.playing)}>{seq.playing ? t('pause', lang) : t('play', lang)}</button>
         <button type="button" onClick={() => player.enqueue(scramble(18), 160)}>{t('scramble', lang)}</button>
         <button type="button" onClick={() => { player.reset(SOLVED); seq.restart() }}>{t('resetCube', lang)}</button>
+        <button type="button" disabled={!player.idle} onClick={() => solveMinimal(player.cube).then((m) => player.enqueue(m, 300))}>{t('shortSolution', lang)}</button>
         <button type="button" onClick={() => setViewKey((k) => k + 1)}>{t('standardView', lang)}</button>
         <label>
           {ms} ms <input type="range" min={150} max={1400} step={50} value={ms} onChange={(e) => setMs(+e.target.value)} />
