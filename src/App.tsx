@@ -7,6 +7,7 @@ import { Welcome } from './app/Welcome'
 import { CubeDemo } from './cube3d/CubeDemo'
 import { t } from './i18n'
 import { Learn } from './learn/Learn'
+import { Practice } from './practice/Practice'
 import { ScanDemo } from './scan/ScanDemo'
 import { SolveMine } from './solve/SolveMine'
 
@@ -33,6 +34,7 @@ function Router() {
   const pages: Record<string, () => ReactNode> = {
     '#risolvi': () => <SolveMine lang={lang} />,
     '#impostazioni': () => <SettingsScreen />,
+    '#pratica': () => <Practice lang={lang} />,
     '#cubo': () => <CubeDemo />,
     '#scansione': () => <ScanDemo />,
   }
