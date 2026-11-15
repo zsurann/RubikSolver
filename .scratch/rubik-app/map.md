@@ -38,6 +38,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - [Cubo 3D](issues/15-task-cubo-3d.md): CubeView r3f + useCubePlayer/useSequence; frecce, strato illuminato, trascinamento, vista standard; demo /#cubo.
 - [Solver principianti](issues/16-task-solver-principianti.md): 8 fasi con ricerca limitata alle formule insegnate + rotazioni y; ~156 mosse, ~8 ms; 1000 cubi risolti nei test.
 - [Solver mosse minime](issues/17-task-solver-minime.md): min2phase.js in Web Worker, licenza MIT; ≤21 mosse su 1000 cubi.
+- [Scansione](issues/18-task-scansione.md): griglia + Lab + abbinamento ai pezzi (ungherese) + rotazioni facce; scatto automatico, guida 3D, avviso centro; e2e con fotocamera finta ok.
 
 ## Not yet specified
 
