@@ -25,14 +25,15 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - [Metodo principianti](issues/01-research-metodo-principianti.md): strati in 8 fasi con margherita, giallo sempre in alto, 7 algoritmi brevi senza B.
 - [Stack 3D e solver](issues/02-research-stack-3d-solver.md): Three.js con cubo nostro; min2phase in Web Worker per le mosse minime; solver principianti a fasi da scrivere.
 - [Riconoscimento colori](issues/03-research-riconoscimento-colori.md): griglia guida + Lab, calibrazione sui centri, abbinamento ai pezzi a ΔE minimo, verify() + ritocco dei pezzi incerti; niente OpenCV/ML.
+- [Scelta dello stack](issues/05-grilling-stack.md): React + TS + Vite + r3f; min2phase (GPL accettata); backend Cloudflare Workers + D1 UE + better-auth; hosting Cloudflare.
 
 ## Not yet specified
 
 - Contenuto dettagliato delle lezioni (testi, quante fasi, schemi visivi per ogni algoritmo, come spiegare la notazione a un principiante). Dipende dal metodo scelto.
 - Modalità Pratica: cosa dentro (timer, mescolata casuale, suggerimenti a richiesta, statistiche?).
 - UX della scansione: ordine delle facce, guida a schermo, cosa succede se lo stato del cubo è impossibile.
-- Hosting e deploy, dominio, CI.
-- Licenza di min2phase.js (MIT o GPL) da confermare prima di usarlo.
+- Dominio e CI per il deploy su Cloudflare.
+- Licenza di min2phase.js da verificare in costruzione (GPL accettata dall'utente).
 - Strategia di test (logica del cubo, solver, riconoscimento colori; verificare i 7 algoritmi del metodo su simulatore).
 - Flusso di traduzione IT/EN.
 - Accessibilità (daltonici: i colori del cubo sono il problema principale), prestazioni su telefoni economici.
