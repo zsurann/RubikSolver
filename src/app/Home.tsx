@@ -25,6 +25,10 @@ export function Home({ lang }: { lang: Lang }) {
           </a>
         ))}
       </nav>
+      <footer className="row muted" style={{ justifyContent: 'center', gap: 16 }}>
+        <a href="#privacy" style={{ color: 'inherit' }}>{t('privacy', lang)}</a>
+        <a href="#termini" style={{ color: 'inherit' }}>{t('terms', lang)}</a>
+      </footer>
     </main>
   )
 }

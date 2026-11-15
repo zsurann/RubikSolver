@@ -23,6 +23,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - [Input, modalità, lingua, progressi](issues/00-grilling-iniziale.md): web app; fotocamera + ritocco manuale; tre modalità; soluzione a scelta (principianti/minime); IT+EN; account cloud.
 - [Backend account](issues/04-research-backend-account.md): Supabase Free in UE (Frankfurt), SMTP esterno in produzione; alternativa Cloudflare.
 - [Sync progressi](issues/25-task-sync-progressi.md): schermata account (14+, Google, email, link), unione ospite→account e salvataggio automatico, export/azzera/elimina; e2e su due browser.
+- [Inglese, accessibilità, privacy](issues/26-task-inglese-accessibilita-privacy.md): interfaccia e lezioni IT/EN, simboli per daltonici, grafica leggera/automatica, privacy e termini, cancellazione dati locali.
 - [Metodo principianti](issues/01-research-metodo-principianti.md): strati in 8 fasi con margherita, giallo sempre in alto, 7 algoritmi brevi senza B.
 - [Stack 3D e solver](issues/02-research-stack-3d-solver.md): Three.js con cubo nostro; min2phase in Web Worker per le mosse minime; solver principianti a fasi da scrivere.
 - [Riconoscimento colori](issues/03-research-riconoscimento-colori.md): griglia guida + Lab, calibrazione sui centri, abbinamento ai pezzi a ΔE minimo, verify() + ritocco dei pezzi incerti; niente OpenCV/ML.
@@ -47,6 +48,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - [Pratica](issues/22-task-pratica.md): cubo libero con aiuto, cronometro con medie e storico, allenamento per fase.
 - [Backend account](issues/23-task-backend-account.md): un Worker (app + /api) con better-auth su D1 UE, email Resend, progressi/export/cancellazione; provato in locale; pubblicazione da fare con l'account Cloudflare dell'utente.
 - [Sync progressi](issues/25-task-sync-progressi.md): schermata account (14+, Google, email, link), unione ospite→account e salvataggio automatico, export/azzera/elimina; e2e su due browser.
+- [Inglese, accessibilità, privacy](issues/26-task-inglese-accessibilita-privacy.md): interfaccia e lezioni IT/EN, simboli per daltonici, grafica leggera/automatica, privacy e termini, cancellazione dati locali.
 
 ## Not yet specified
 

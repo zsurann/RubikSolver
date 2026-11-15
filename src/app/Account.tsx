@@ -1,7 +1,17 @@
 import { useState, type FormEvent } from 'react'
-import { t, type Lang } from '../i18n'
+import { t, type Key, type Lang } from '../i18n'
 import { authClient } from './auth'
 import { EMPTY_PROGRESS, useProgress } from './progress'
+
+const ERRORS: Record<string, Key> = {
+  INVALID_EMAIL_OR_PASSWORD: 'errInvalidLogin',
+  USER_ALREADY_EXISTS: 'errUserExists',
+  USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: 'errUserExists',
+  PASSWORD_TOO_SHORT: 'errPasswordShort',
+  INVALID_EMAIL: 'errInvalidEmail',
+  INVALID_TOKEN: 'errInvalidToken',
+}
+const errorText = (code: string | undefined, lang: Lang) => t(ERRORS[code ?? ''] ?? 'accountError', lang)
 
 /** Account facoltativo: accesso, sincronizzazione, esportazione e cancellazione dei dati. */
 export function Account({ lang }: { lang: Lang }) {
@@ -18,11 +28,11 @@ function SignIn({ lang }: { lang: Lang }) {
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
   const [busy, setBusy] = useState(false)
 
-  const run = async (fn: () => Promise<{ error?: { message?: string } | null }>, okText?: string) => {
+  const run = async (fn: () => Promise<{ error?: { message?: string; code?: string } | null }>, okText?: string) => {
     setBusy(true); setMsg(null)
     try {
       const r = await fn()
-      if (r.error) setMsg({ ok: false, text: r.error.message || t('accountError', lang) })
+      if (r.error) setMsg({ ok: false, text: errorText(r.error.code, lang) })
       else if (okText) setMsg({ ok: true, text: okText })
     } catch {
       setMsg({ ok: false, text: t('accountOffline', lang) })
@@ -143,7 +153,7 @@ export function NewPassword({ lang }: { lang: Lang }) {
     <form className="page" onSubmit={async (e) => {
       e.preventDefault()
       const r = await authClient.resetPassword({ newPassword: pw, token }).catch(() => ({ error: { message: t('accountOffline', lang) } }))
-      setMsg(r.error ? { ok: false, text: r.error.message || t('accountError', lang) } : { ok: true, text: t('accountPasswordChanged', lang) })
+      setMsg(r.error ? { ok: false, text: errorText((r.error as { code?: string }).code, lang) } : { ok: true, text: t('accountPasswordChanged', lang) })
     }}>
       <h2>{t('accountNewPassword', lang)}</h2>
       <input id="new-password" type="password" required minLength={8} autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} className="btn" />

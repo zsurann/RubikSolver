@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { COLOR_KEY, STICKER_HEX } from '../cube/colors'
+import { COLOR_KEY, COLOR_SYMBOL, STICKER_HEX } from '../cube/colors'
 import { FACES, type Face, type State } from '../cube/cube'
 import { CubeView } from '../cube3d/CubeView'
 import { t, type Lang } from '../i18n'
@@ -68,7 +68,9 @@ export function EditScreen({ lang, initial, uncertain = [], onConfirm, onRescanF
             onClick={() => setColor(f)}
             style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 10, borderRadius: 12, border: color === f ? '3px solid var(--accent)' : '1px solid var(--line)', background: 'var(--surface)', color: 'inherit', font: 'inherit' }}
           >
-            <span style={{ width: 26, height: 26, borderRadius: 6, background: STICKER_HEX[f], border: '1px solid #0003' }} />
+            <span aria-hidden style={{ width: 26, height: 26, borderRadius: 6, background: STICKER_HEX[f], border: '1px solid #0003', display: 'grid', placeItems: 'center', color: f === 'D' || f === 'U' ? '#1b2230' : '#fff', fontSize: 14 }}>
+              {COLOR_SYMBOL[f]}
+            </span>
             {name(f)}
           </button>
         ))}

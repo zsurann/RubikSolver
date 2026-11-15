@@ -1,15 +1,14 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Account, NewPassword } from './app/Account'
 import { Home } from './app/Home'
+import { Privacy, Terms } from './app/Legal'
 import { SettingsScreen } from './app/SettingsScreen'
 import { ProgressProvider } from './app/progress'
 import { SettingsProvider, useSettings } from './app/settings'
 import { Welcome } from './app/Welcome'
-import { CubeDemo } from './cube3d/CubeDemo'
 import { t } from './i18n'
 import { Learn } from './learn/Learn'
 import { Practice } from './practice/Practice'
-import { ScanDemo } from './scan/ScanDemo'
 import { SolveMine } from './solve/SolveMine'
 
 function useHash() {
@@ -38,8 +37,8 @@ function Router() {
     '#pratica': () => <Practice lang={lang} />,
     '#account': () => <Account lang={lang} />,
     '#nuova-password': () => <NewPassword lang={lang} />,
-    '#cubo': () => <CubeDemo />,
-    '#scansione': () => <ScanDemo />,
+    '#privacy': () => <Privacy lang={lang} />,
+    '#termini': () => <Terms lang={lang} />,
   }
   if (hash.startsWith('#impara')) pages[hash] = () => <Learn lang={lang} id={hash.slice('#impara-'.length) || undefined} />
   const page = pages[hash]

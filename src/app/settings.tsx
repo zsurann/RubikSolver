@@ -24,6 +24,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   return <SettingsContext.Provider value={{ settings, update: (patch) => set((s) => ({ ...s, ...patch })) }}>{children}</SettingsContext.Provider>
 }
 
+/** Come useSettings, ma senza errore fuori dal provider (componenti riusabili come il cubo 3D). */
+export const useSettingsOptional = () => useContext(SettingsContext)?.settings ?? DEFAULT_SETTINGS
+
 export function useSettings() {
   const c = useContext(SettingsContext)
   if (!c) throw new Error('useSettings fuori da SettingsProvider')

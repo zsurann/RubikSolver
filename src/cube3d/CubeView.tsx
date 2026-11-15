@@ -1,7 +1,8 @@
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef, type MutableRefObject } from 'react'
 import * as THREE from 'three'
-import { STICKER_HEX } from '../cube/colors'
+import { useSettingsOptional } from '../app/settings'
+import { COLOR_SYMBOL, STICKER_HEX } from '../cube/colors'
 import { STICKERS, type Face, type Move, type State } from '../cube/cube'
 import { arrowFor, inLayer, moveInfo, type ArrowPlacement, type Vec3 } from './moves'
 import type { Job } from './player'
@@ -29,6 +30,7 @@ type Drag = { active: boolean; x: number; y: number; vx: number; vy: number; pen
 
 export function CubeView({ cube, current, onDone, pending, arrows = true, glow = true, viewKey = 0, label, blink, onStickerClick }: Props) {
   const drag = useRef<Drag>({ active: false, x: 0, y: 0, vx: 0, vy: 0, pendX: 0, pendY: 0 })
+  const { colorblind, lightGraphics } = useSettingsOptional()
   return (
     <div
       role="img"
@@ -49,15 +51,32 @@ export function CubeView({ cube, current, onDone, pending, arrows = true, glow =
       onPointerUp={() => (drag.current.active = false)}
       onPointerCancel={() => (drag.current.active = false)}
     >
-      <Canvas camera={{ position: [5.2, 4.6, 7.4], fov: 32 }} dpr={[1, 2]}>
+      <Canvas camera={{ position: [5.2, 4.6, 7.4], fov: 32 }} dpr={lightGraphics ? 1 : [1, 2]} gl={{ antialias: !lightGraphics }}>
+        {!lightGraphics && <AutoQuality />}
         <hemisphereLight args={[0xffffff, 0x445066, 1.6]} />
         <directionalLight position={[4, 8, 6]} intensity={1.8} />
         <directionalLight position={[-6, 2, -4]} intensity={0.6} color={0xbfd4ff} />
-        <Shadow />
-        <Scene {...{ cube, current, onDone, pending, arrows, glow, viewKey, drag, blink, onStickerClick }} />
+        {!lightGraphics && <Shadow />}
+        <Scene {...{ cube, current, onDone, pending, arrows, glow, viewKey, drag, blink, onStickerClick, symbols: colorblind }} />
       </Canvas>
     </div>
   )
+}
+
+/** Se il telefono fatica (sotto ~25 fotogrammi al secondo), abbassa la risoluzione. */
+function AutoQuality() {
+  const setDpr = useThree((st) => st.setDpr)
+  const stats = useRef({ frames: 0, time: 0, done: false })
+  useFrame((_, delta) => {
+    const st = stats.current
+    if (st.done) return
+    st.frames++
+    st.time += delta
+    if (st.frames < 90) return
+    if (st.time / st.frames > 0.04) setDpr(1)
+    st.done = true
+  })
+  return null
 }
 
 function Shadow() {
@@ -103,6 +122,22 @@ const glowMats = makeMats()
 const blinkMats = makeMats()
 const Z = new THREE.Vector3(0, 0, 1)
 
+// Simboli per daltonici: una texture per colore, creata quando serve.
+const symbolGeo = new THREE.PlaneGeometry(0.5, 0.5)
+const symbolMats: Partial<Record<Face, THREE.MeshBasicMaterial>> = {}
+function symbolMat(f: Face) {
+  if (symbolMats[f]) return symbolMats[f]
+  const c = document.createElement('canvas')
+  c.width = c.height = 128
+  const g = c.getContext('2d')!
+  g.fillStyle = f === 'D' || f === 'U' ? '#1b2230' : '#ffffff'
+  g.font = 'bold 96px system-ui, sans-serif'
+  g.textAlign = 'center'
+  g.textBaseline = 'middle'
+  g.fillText(COLOR_SYMBOL[f], 64, 70)
+  return (symbolMats[f] = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false }))
+}
+
 const CUBIE_POS: Vec3[] = []
 for (let x = -1; x <= 1; x++) for (let y = -1; y <= 1; y++) for (let z = -1; z <= 1; z++) if (x || y || z) CUBIE_POS.push([x, y, z])
 const STICKERS_OF = CUBIE_POS.map((p) =>
@@ -113,9 +148,9 @@ const STICKERS_OF = CUBIE_POS.map((p) =>
   })),
 )
 
-type CubieProps = { idx: number; cube: State; glowing: boolean; blink?: Set<number>; onStickerClick?: (i: number) => void }
+type CubieProps = { idx: number; cube: State; glowing: boolean; blink?: Set<number>; onStickerClick?: (i: number) => void; symbols?: boolean }
 
-function Cubie({ idx, cube, glowing, blink, onStickerClick }: CubieProps) {
+function Cubie({ idx, cube, glowing, blink, onStickerClick, symbols }: CubieProps) {
   return (
     <group position={CUBIE_POS[idx]}>
       <mesh geometry={bodyGeo} material={bodyMat} />
@@ -131,15 +166,17 @@ function Cubie({ idx, cube, glowing, blink, onStickerClick }: CubieProps) {
             e.stopPropagation()
             onStickerClick(s.i)
           })}
-        />
+        >
+          {symbols && cube[s.i] !== '?' && <mesh geometry={symbolGeo} material={symbolMat(cube[s.i] as Face)} position-z={0.04} />}
+        </mesh>
       ))}
     </group>
   )
 }
 
-type SceneProps = Omit<Props, 'label'> & { drag: MutableRefObject<Drag> }
+type SceneProps = Omit<Props, 'label'> & { drag: MutableRefObject<Drag>; symbols: boolean }
 
-function Scene({ cube, current, onDone, pending, arrows, glow, viewKey, drag, blink, onStickerClick }: SceneProps) {
+function Scene({ cube, current, onDone, pending, arrows, glow, viewKey, drag, blink, onStickerClick, symbols }: SceneProps) {
   const blinkSet = useMemo(() => new Set(blink), [blink])
   const root = useRef<THREE.Group>(null!)
   const turning = useRef<THREE.Group>(null!)
@@ -200,11 +237,11 @@ function Scene({ cube, current, onDone, pending, arrows, glow, viewKey, drag, bl
   return (
     <group ref={root}>
       {still.map((i) => (
-        <Cubie key={i} idx={i} cube={cube} glowing={!!glowInfo && inLayer(CUBIE_POS[i], glowInfo)} blink={blinkSet} onStickerClick={onStickerClick} />
+        <Cubie key={i} idx={i} cube={cube} glowing={!!glowInfo && inLayer(CUBIE_POS[i], glowInfo)} blink={blinkSet} onStickerClick={onStickerClick} symbols={symbols} />
       ))}
       {current && (
         <group ref={turning} key={current.id}>
-          {moving.map((i) => <Cubie key={i} idx={i} cube={cube} glowing={false} />)}
+          {moving.map((i) => <Cubie key={i} idx={i} cube={cube} glowing={false} symbols={symbols} />)}
         </group>
       )}
       {arrows && !current && pending && <Arrow placement={arrowFor(pending)} />}

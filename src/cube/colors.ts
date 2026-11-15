@@ -6,3 +6,5 @@ export const STICKER_HEX: Record<Face | '?', string> = {
 }
 /** Chiave i18n del nome del colore di ogni faccia. */
 export const COLOR_KEY = { U: 'yellow', D: 'white', F: 'red', B: 'orange', R: 'green', L: 'blue' } as const satisfies Record<Face, string>
+/** Simboli per la modalità daltonici, uguali in ogni lingua. */
+export const COLOR_SYMBOL: Record<Face, string> = { U: '★', D: '○', F: '▲', B: '◆', R: '■', L: '✚' }
