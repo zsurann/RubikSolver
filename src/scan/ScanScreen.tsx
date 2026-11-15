@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { applyAlg, FACES, SOLVED, type Face } from '../cube/cube'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { COLOR_KEY } from '../cube/colors'
+import { applyAlg, FACES, SOLVED, type Face, type Move } from '../cube/cube'
 import { CubeView } from '../cube3d/CubeView'
 import { useCubePlayer } from '../cube3d/player'
 import { t, type Lang } from '../i18n'
 import { assemble, type ScanResult } from './assemble'
 import { deltaE2000, rgbToLab, type RGB } from './color'
-import { SCAN_ORDER, TYPICAL } from './faces'
+import { FROM_FRONT, SCAN_ORDER, TYPICAL } from './faces'
 import { sampleGrid, type Cell } from './sample'
 
 const STABLE_MS = 500
@@ -16,14 +17,19 @@ const nearest = (rgb: RGB): Face => {
   const lab = rgbToLab(rgb)
   return FACES.reduce((b, f) => (deltaE2000(lab, rgbToLab(TYPICAL[f])) < deltaE2000(lab, rgbToLab(TYPICAL[b])) ? f : b))
 }
-const COLOR_NAME: Record<Face, 'yellow' | 'white' | 'red' | 'orange' | 'green' | 'blue'> = {
-  U: 'yellow', D: 'white', F: 'red', B: 'orange', R: 'green', L: 'blue',
-}
 
-type Props = { lang: Lang; onDone: (r: ScanResult) => void; onManual: () => void }
+type Props = {
+  lang: Lang
+  onDone: (r: ScanResult) => void
+  onManual: () => void
+  /** rifai solo questa faccia, tenendo gli altri colori di `base` */
+  only?: Face
+  base?: RGB[]
+}
 type Phase = { kind: 'starting' } | { kind: 'denied' } | { kind: 'turn'; step: number } | { kind: 'scan'; step: number } | { kind: 'wrongCenter'; step: number; seen: Face; cells: RGB[] }
 
-export function ScanScreen({ lang, onDone, onManual }: Props) {
+export function ScanScreen({ lang, onDone, onManual, only, base }: Props) {
+  const steps = useMemo(() => (only ? [SCAN_ORDER.findIndex((s) => s.face === only)] : SCAN_ORDER.map((_, i) => i)), [only])
   const video = useRef<HTMLVideoElement>(null)
   const canvas = useRef<HTMLCanvasElement | null>(null)
   const [phase, setPhase] = useState<Phase>({ kind: 'starting' })
@@ -40,12 +46,12 @@ export function ScanScreen({ lang, onDone, onManual }: Props) {
         if (cancelled) return s.getTracks().forEach((tr) => tr.stop())
         stream = s
         video.current!.srcObject = s
-        return video.current!.play().then(() => setPhase({ kind: 'scan', step: 0 }))
+        return video.current!.play().then(() => setPhase(only && only !== 'F' ? { kind: 'turn', step: steps[0] } : { kind: 'scan', step: steps[0] }))
       })
       .catch(() => !cancelled && setPhase({ kind: 'denied' }))
     if (!navigator.mediaDevices) setTimeout(() => setPhase({ kind: 'denied' }))
     return () => { cancelled = true; stream?.getTracks().forEach((tr) => tr.stop()) }
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const capture = useCallback((step: number, cells: RGB[], force = false) => {
     const expected = SCAN_ORDER[step].face
@@ -55,9 +61,12 @@ export function ScanScreen({ lang, onDone, onManual }: Props) {
     const next = { ...faces, [expected]: cells }
     setFaces(next)
     stable.current = null
-    if (step + 1 < SCAN_ORDER.length) setPhase({ kind: 'turn', step: step + 1 })
-    else onDone(assemble(FACES.flatMap((f) => next[f]!)))
-  }, [faces, onDone])
+    const k = steps.indexOf(step)
+    if (k + 1 < steps.length) return setPhase({ kind: 'turn', step: steps[k + 1] })
+    const all = base ? [...base] : []
+    FACES.forEach((f, i) => next[f] && all.splice(i * 9, 9, ...next[f]!))
+    onDone(assemble(all))
+  }, [faces, onDone, steps, base])
 
   // campionamento ~10 volte al secondo
   useEffect(() => {
@@ -99,7 +108,7 @@ export function ScanScreen({ lang, onDone, onManual }: Props) {
   return (
     <section style={box}>
       <p style={{ fontWeight: 700, margin: 0 }}>
-        {t('scanFace', lang)} {step + 1} {t('stepOf', lang)} 6 · {t('scanCenter', lang)} {t(COLOR_NAME[face], lang)}
+        {only ? '' : `${t('scanFace', lang)} ${step + 1} ${t('stepOf', lang)} 6 · `}{t('scanCenter', lang)} {t(COLOR_KEY[face], lang)}
       </p>
       <div style={{ position: 'relative', aspectRatio: '1', width: '100%', maxWidth: 480, margin: '0 auto', borderRadius: 18, overflow: 'hidden', background: '#111' }}>
         <video ref={video} playsInline muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -108,10 +117,18 @@ export function ScanScreen({ lang, onDone, onManual }: Props) {
             <div key={i} style={{ border: '3px solid rgba(255,255,255,.85)', borderRadius: 10, boxShadow: live[i] ? `inset 0 0 0 6px rgb(${live[i].rgb.join(',')})` : undefined }} />
           ))}
         </div>
-        {phase.kind === 'turn' && <TurnGuide step={phase.step} lang={lang} onReady={() => setPhase({ kind: 'scan', step: phase.step })} />}
+        {phase.kind === 'turn' && (
+          <TurnGuide
+            from={only ? [] : SCAN_ORDER.slice(0, phase.step).flatMap((s) => s.turn)}
+            turn={only ? FROM_FRONT[only] : SCAN_ORDER[phase.step].turn}
+            text={t(only ? 'scanTurnGeneric' : phase.step === 4 ? 'scanTurnUp' : phase.step === 5 ? 'scanTurnDown' : 'scanTurnSide', lang)}
+            ready={t('scanReady', lang)}
+            onReady={() => setPhase({ kind: 'scan', step: phase.step })}
+          />
+        )}
         {phase.kind === 'wrongCenter' && (
           <div style={overlay}>
-            <p>{t('scanWrongCenter', lang).replace('{expected}', t(COLOR_NAME[face], lang)).replace('{seen}', t(COLOR_NAME[phase.seen], lang))}</p>
+            <p>{t('scanWrongCenter', lang).replace('{expected}', t(COLOR_KEY[face], lang)).replace('{seen}', t(COLOR_KEY[phase.seen], lang))}</p>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
               <button type="button" onClick={() => { stable.current = null; setPhase({ kind: 'scan', step }) }}>{t('scanRetry', lang)}</button>
               <button type="button" onClick={() => capture(step, phase.cells, true)}>{t('scanKeep', lang)}</button>
@@ -128,23 +145,22 @@ export function ScanScreen({ lang, onDone, onManual }: Props) {
 }
 
 /** Animazione 3D: come girare il cubo vero prima della prossima faccia. */
-function TurnGuide({ step, lang, onReady }: { step: number; lang: Lang; onReady: () => void }) {
-  const before = SCAN_ORDER.slice(0, step).flatMap((s) => s.turn)
-  const player = useCubePlayer(applyAlg(SOLVED, before))
+function TurnGuide({ from, turn, text, ready, onReady }: { from: Move[]; turn: Move[]; text: string; ready: string; onReady: () => void }) {
+  const start = applyAlg(SOLVED, from)
+  const player = useCubePlayer(start)
   const { enqueue, reset } = player
-  const turn = SCAN_ORDER[step].turn
   useEffect(() => {
-    const id = setInterval(() => { reset(applyAlg(SOLVED, before)); enqueue(turn, 900) }, 2600)
+    const id = setInterval(() => { reset(start); enqueue(turn, 900) }, 900 * turn.length + 1700)
     enqueue(turn, 900)
     return () => clearInterval(id)
-  }, [step]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [start, turn.join(' ')]) // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div style={{ ...overlay, background: 'rgba(238,240,244,.96)', color: '#1b2230' }}>
-      <p style={{ fontWeight: 700 }}>{t(step === 4 ? 'scanTurnUp' : step === 5 ? 'scanTurnDown' : 'scanTurnSide', lang)}</p>
+      <p style={{ fontWeight: 700 }}>{text}</p>
       <div style={{ height: 'min(240px, 50vw)' }}>
         <CubeView cube={player.cube} current={player.current} onDone={player.done} arrows={false} glow={false} />
       </div>
-      <button type="button" onClick={onReady}>{t('scanReady', lang)}</button>
+      <button type="button" onClick={onReady}>{ready}</button>
     </div>
   )
 }

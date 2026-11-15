@@ -11,6 +11,8 @@ export type ScanResult = {
   uncertain: number[]
   /** quarti di giro applicati a ogni faccia se era stata inquadrata ruotata */
   rotations: Record<Face, number>
+  /** colori campionati (ordine facelet), per rifare una sola faccia */
+  samples: RGB[]
 }
 
 const CORNER_COLORS = CORNERS.map((c) => c.map((i) => SOLVED[i] as Face))
@@ -77,5 +79,5 @@ export function assemble(samples: RGB[]): ScanResult {
     // incerto: non è il colore più vicino, è lontano da tutti, o due colori sono quasi alla pari
     if (assigned > d1 + 2 || assigned > 20 || d2 - d1 < 8) uncertain.push(i)
   })
-  return { state: best.state, check: verify(best.state), uncertain, rotations }
+  return { state: best.state, check: verify(best.state), uncertain, rotations, samples }
 }

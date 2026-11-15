@@ -1,14 +1,11 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useEffect, useMemo, useRef, type MutableRefObject } from 'react'
 import * as THREE from 'three'
+import { STICKER_HEX } from '../cube/colors'
 import { STICKERS, type Face, type Move, type State } from '../cube/cube'
 import { arrowFor, inLayer, moveInfo, type ArrowPlacement, type Vec3 } from './moves'
 import type { Job } from './player'
 
-// Stile "Classico" deciso nel prototipo: adesivi lucidi su plastica nera. Giallo in alto, rosso davanti.
-const STICKER_COLORS: Record<Face, string> = {
-  U: '#ffd500', D: '#ffffff', F: '#c41e3a', B: '#ff5800', R: '#009e60', L: '#0051ba',
-}
 const reducedMotion = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
@@ -22,11 +19,15 @@ type Props = {
   /** cambia valore per riportare il cubo alla vista standard */
   viewKey?: number
   label?: string
+  /** adesivi da far lampeggiare (es. incerti dopo la scansione) */
+  blink?: number[]
+  /** tocco su un adesivo (indice facelet); se assente il cubo non è cliccabile */
+  onStickerClick?: (i: number) => void
 }
 
 type Drag = { active: boolean; x: number; y: number; vx: number; vy: number; pendX: number; pendY: number }
 
-export function CubeView({ cube, current, onDone, pending, arrows = true, glow = true, viewKey = 0, label }: Props) {
+export function CubeView({ cube, current, onDone, pending, arrows = true, glow = true, viewKey = 0, label, blink, onStickerClick }: Props) {
   const drag = useRef<Drag>({ active: false, x: 0, y: 0, vx: 0, vy: 0, pendX: 0, pendY: 0 })
   return (
     <div
@@ -34,12 +35,13 @@ export function CubeView({ cube, current, onDone, pending, arrows = true, glow =
       aria-label={label}
       style={{ width: '100%', height: '100%', touchAction: 'none', cursor: 'grab' }}
       onPointerDown={(e) => {
-        e.currentTarget.setPointerCapture(e.pointerId)
         Object.assign(drag.current, { active: true, x: e.clientX, y: e.clientY, vx: 0, vy: 0 })
       }}
       onPointerMove={(e) => {
         const d = drag.current
         if (!d.active) return
+        // cattura il puntatore solo quando è davvero un trascinamento, così i tocchi restano clic sugli adesivi
+        if (!e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.setPointerCapture(e.pointerId)
         d.pendX += e.clientX - d.x
         d.pendY += e.clientY - d.y
         Object.assign(d, { vx: e.clientX - d.x, vy: e.clientY - d.y, x: e.clientX, y: e.clientY })
@@ -52,7 +54,7 @@ export function CubeView({ cube, current, onDone, pending, arrows = true, glow =
         <directionalLight position={[4, 8, 6]} intensity={1.8} />
         <directionalLight position={[-6, 2, -4]} intensity={0.6} color={0xbfd4ff} />
         <Shadow />
-        <Scene {...{ cube, current, onDone, pending, arrows, glow, viewKey, drag }} />
+        <Scene {...{ cube, current, onDone, pending, arrows, glow, viewKey, drag, blink, onStickerClick }} />
       </Canvas>
     </div>
   )
@@ -94,10 +96,11 @@ const stickerGeo = new THREE.ExtrudeGeometry(roundedRect(0.86, 0.1), {
 const bodyMat = new THREE.MeshStandardMaterial({ color: 0x111214, roughness: 0.35 })
 const makeMats = () =>
   Object.fromEntries(
-    Object.entries(STICKER_COLORS).map(([f, c]) => [f, new THREE.MeshStandardMaterial({ color: c, roughness: 0.22, emissive: c, emissiveIntensity: 0 })]),
-  ) as Record<Face, THREE.MeshStandardMaterial>
+    Object.entries(STICKER_HEX).map(([f, c]) => [f, new THREE.MeshStandardMaterial({ color: c, roughness: 0.22, emissive: c, emissiveIntensity: 0 })]),
+  ) as Record<Face | '?', THREE.MeshStandardMaterial>
 const stickerMats = makeMats()
 const glowMats = makeMats()
+const blinkMats = makeMats()
 const Z = new THREE.Vector3(0, 0, 1)
 
 const CUBIE_POS: Vec3[] = []
@@ -110,13 +113,25 @@ const STICKERS_OF = CUBIE_POS.map((p) =>
   })),
 )
 
-function Cubie({ idx, cube, glowing }: { idx: number; cube: State; glowing: boolean }) {
-  const mats = glowing ? glowMats : stickerMats
+type CubieProps = { idx: number; cube: State; glowing: boolean; blink?: Set<number>; onStickerClick?: (i: number) => void }
+
+function Cubie({ idx, cube, glowing, blink, onStickerClick }: CubieProps) {
   return (
     <group position={CUBIE_POS[idx]}>
       <mesh geometry={bodyGeo} material={bodyMat} />
       {STICKERS_OF[idx].map((s) => (
-        <mesh key={s.i} geometry={stickerGeo} material={mats[cube[s.i] as Face]} position={s.position} quaternion={s.quaternion} />
+        <mesh
+          key={s.i}
+          geometry={stickerGeo}
+          material={(blink?.has(s.i) ? blinkMats : glowing ? glowMats : stickerMats)[cube[s.i] as Face | '?']}
+          position={s.position}
+          quaternion={s.quaternion}
+          onClick={onStickerClick && ((e) => {
+            if (e.delta > 6) return // era un trascinamento
+            e.stopPropagation()
+            onStickerClick(s.i)
+          })}
+        />
       ))}
     </group>
   )
@@ -124,7 +139,8 @@ function Cubie({ idx, cube, glowing }: { idx: number; cube: State; glowing: bool
 
 type SceneProps = Omit<Props, 'label'> & { drag: MutableRefObject<Drag> }
 
-function Scene({ cube, current, onDone, pending, arrows, glow, viewKey, drag }: SceneProps) {
+function Scene({ cube, current, onDone, pending, arrows, glow, viewKey, drag, blink, onStickerClick }: SceneProps) {
+  const blinkSet = useMemo(() => new Set(blink), [blink])
   const root = useRef<THREE.Group>(null!)
   const turning = useRef<THREE.Group>(null!)
   const anim = useRef<{ id: number; start: number } | null>(null)
@@ -173,6 +189,8 @@ function Scene({ cube, current, onDone, pending, arrows, glow, viewKey, drag }: 
     // pulsazione di freccia e strato evidenziato
     const pulse = reducedMotion ? 1 : 0.5 + 0.5 * Math.sin(now / 260)
     for (const m of Object.values(glowMats)) m.emissiveIntensity = 0.1 + 0.22 * pulse
+    const blinkOn = reducedMotion ? 0.35 : 0.5 + 0.5 * Math.sin(now / 160)
+    for (const m of Object.values(blinkMats)) m.emissiveIntensity = 0.55 * blinkOn
     arrowMat.color.copy(DIM).lerp(WHITE, pulse)
   })
 
@@ -181,7 +199,9 @@ function Scene({ cube, current, onDone, pending, arrows, glow, viewKey, drag }: 
 
   return (
     <group ref={root}>
-      {still.map((i) => <Cubie key={i} idx={i} cube={cube} glowing={!!glowInfo && inLayer(CUBIE_POS[i], glowInfo)} />)}
+      {still.map((i) => (
+        <Cubie key={i} idx={i} cube={cube} glowing={!!glowInfo && inLayer(CUBIE_POS[i], glowInfo)} blink={blinkSet} onStickerClick={onStickerClick} />
+      ))}
       {current && (
         <group ref={turning} key={current.id}>
           {moving.map((i) => <Cubie key={i} idx={i} cube={cube} glowing={false} />)}

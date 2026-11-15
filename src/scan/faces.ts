@@ -19,3 +19,6 @@ export const SCAN_ORDER: { face: Face; turn: Move[] }[] = [
 export const TYPICAL: Record<Face, RGB> = {
   U: [225, 205, 45], D: [230, 230, 225], F: [185, 30, 45], B: [235, 105, 35], R: [25, 150, 80], L: [25, 75, 175],
 }
+
+/** Rotazione per passare da "giallo in alto, rosso davanti" alla faccia indicata (per rifare una faccia sola). */
+export const FROM_FRONT: Record<Face, Move[]> = { F: [], R: ['y'], B: ['y2'], L: ["y'"], U: ["x'"], D: ['x'] }

@@ -1,25 +1,51 @@
 import { useState } from 'react'
+import type { Face, State } from '../cube/cube'
 import { CubeView } from '../cube3d/CubeView'
+import { EditScreen } from '../edit/EditScreen'
+import { EMPTY } from '../edit/diagnose'
 import { detectLang } from '../i18n'
 import type { ScanResult } from './assemble'
 import { ScanScreen } from './ScanScreen'
 
-// Pagina di prova della scansione (#scansione). Il ritocco vero arriva con il ticket "Ritocco".
+// Pagina di prova (#scansione): scansione → ritocco → stato confermato. Il flusso vero è in "Risolvi il mio".
 const lang = detectLang()
+type Step =
+  | { kind: 'scan'; only?: Face; base?: ScanResult }
+  | { kind: 'edit'; scan?: ScanResult; key: number }
+  | { kind: 'done'; state: State }
 
 export function ScanDemo() {
-  const [result, setResult] = useState<ScanResult | null>(null)
-  const [manual, setManual] = useState(false)
-  if (manual) return <p style={{ padding: 16 }}>Inserimento a mano: arriva con il ticket Ritocco.</p>
-  if (!result) return <ScanScreen lang={lang} onDone={setResult} onManual={() => setManual(true)} />
+  const [step, setStep] = useState<Step>({ kind: 'scan' })
+  if (step.kind === 'scan')
+    return (
+      <ScanScreen
+        lang={lang}
+        only={step.only}
+        base={step.base?.samples}
+        onDone={(scan) => setStep({ kind: 'edit', scan, key: Date.now() })}
+        onManual={() => setStep({ kind: 'edit', key: Date.now() })}
+      />
+    )
+  if (step.kind === 'edit') {
+    const scan = step.scan
+    return (
+      <EditScreen
+        key={step.key}
+        lang={lang}
+        initial={scan?.state ?? EMPTY}
+        uncertain={scan?.uncertain}
+        onConfirm={(state) => setStep({ kind: 'done', state })}
+        onRescanFace={scan && ((only) => setStep({ kind: 'scan', only, base: scan }))}
+      />
+    )
+  }
   return (
     <main style={{ padding: 16, display: 'grid', gap: 8, maxWidth: 520, margin: '0 auto' }}>
-      <div style={{ aspectRatio: '1', background: 'radial-gradient(120% 90% at 50% 35%, #fff 0%, #cfd4dc 80%)', borderRadius: 18 }}>
-        <CubeView cube={result.state} current={null} onDone={() => {}} />
+      <div style={{ aspectRatio: '1', borderRadius: 18, background: 'radial-gradient(120% 90% at 50% 35%, #fff 0%, #cfd4dc 80%)' }}>
+        <CubeView cube={step.state} current={null} onDone={() => {}} />
       </div>
-      <code style={{ wordBreak: 'break-all' }}>{result.state}</code>
-      <p>Verifica: {result.check.ok ? 'ok' : result.check.error} · incerti: {result.uncertain.length} · rotazioni: {JSON.stringify(result.rotations)}</p>
-      <button type="button" onClick={() => setResult(null)}>Rifai</button>
+      <code style={{ wordBreak: 'break-all' }}>{step.state}</code>
+      <button type="button" onClick={() => setStep({ kind: 'scan' })}>Rifai</button>
     </main>
   )
 }
