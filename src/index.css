@@ -1,0 +1,9 @@
+:root {
+  --bg: #eef0f4; --fg: #1b2230; --muted: #5d6677; --accent: #ff5800;
+  font-family: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--fg); background: var(--bg);
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #10141c; --fg: #e9edf4; --muted: #9aa3b4; --accent: #ff7a2e; color-scheme: dark; }
+}
+body { margin: 0; min-height: 100dvh; }

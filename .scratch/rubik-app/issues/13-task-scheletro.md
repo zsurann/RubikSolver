@@ -1,7 +1,7 @@
 ---
 labels: [wayfinder:task]
 status: open
-assignee:
+assignee: claude
 blocked_by: []
 ---
 ## Question
