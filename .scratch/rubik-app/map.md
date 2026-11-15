@@ -28,6 +28,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - [Scelta dello stack](issues/05-grilling-stack.md): React + TS + Vite + r3f; min2phase (GPL accettata); backend Cloudflare Workers + D1 UE + better-auth; hosting Cloudflare.
 - [Flusso UX](issues/06-grilling-flusso-ux.md): benvenuto breve; login facoltativo; guida una mossa alla volta con "Mi sono perso"; presa mostrata a ogni fase; frecce + lettere; 1 lezione per fase; Pratica con cubo virtuale, timer, allenamento fase.
 - [Prototipo dell'aspetto del cubo](issues/07-prototype-look-cubo.md): stile Classico, sfondo Studio, animazione morbida ~550 ms, freccia bianca pulsante + strato illuminato + didascalia.
+- [Cosa salva l'account](issues/08-grilling-account.md): login facoltativo (Google, email+password, link magico); salva lezioni, tempi, preferenze, cubi scansionati; foto mai salvate; ospite locale unito al login; account solo 14+; elimina/esporta/azzera.
 
 ## Not yet specified
 
@@ -37,7 +38,7 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 - Strategia di test (logica del cubo, solver, riconoscimento colori; verificare i 7 algoritmi del metodo su simulatore).
 - Flusso di traduzione IT/EN.
 - Accessibilità (daltonici: i colori del cubo sono il problema principale), prestazioni su telefoni economici.
-- Privacy/GDPR per gli account e per le immagini della fotocamera.
+- Testo di privacy policy e termini (IT/EN), fornitore email transazionale per recupero password e link magico.
 - Suddivisione della costruzione in ticket `task` (quando le decisioni sono chiuse).
 
 ## Out of scope
