@@ -34,10 +34,11 @@ App web costruita e online: cubo 3D animato, scansione del cubo reale con fotoca
 
 ## Not yet specified
 
-- Dominio proprio (dopo il rilascio su *.pages.dev).
+(niente: tutto è in ticket)
 
 ## Out of scope
 
 - App mobile nativa (scelta: web app).
 - Cubi diversi dal 3x3 (2x2, 4x4, ecc.).
 - Metodi avanzati (CFOP, Roux): l'app è per principianti.
+- Dominio proprio: dopo il rilascio su *.pages.dev ([Piano di costruzione](issues/10-grilling-piano-costruzione.md)).
